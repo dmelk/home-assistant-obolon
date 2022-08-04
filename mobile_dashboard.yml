@@ -1,0 +1,510 @@
+button_card_templates:
+  cardg_bg_color:
+    styles:
+      card:
+        - background-color: '#EEEEEE'
+
+  simple_light_button_tpl:
+    variables:
+      icon: mdi:lightbulb-off
+      icon_on: mdi:lightbulb-on
+      name: ' '
+    icon: |
+      [[[ 
+        return (entity.state === 'on')? variables.icon_on : variables.icon;
+      ]]]
+    name: '[[[ return variables.name ]]]'
+    styles:
+      icon:
+        - color: rgb(68, 115, 158)
+
+  with_fan_button_tpl:
+    variables:
+      switch: ''
+      fan_switch: ''
+    tap_action:
+      action: call-service
+      service: |
+        [[[
+          return (states[variables.switch].state === 'on')? 'switch.turn_off' : 'switch.turn_on'
+        ]]]
+      service_data:
+        entity_id:
+          - '[[[ return variables.switch ]]]'
+          - '[[[ return variables.fan_switch ]]]'
+    hold_action:
+      action: toggle
+
+  light_button_tpl:
+    variables:
+      switch: ''
+      light: ''
+      icon: mdi:lightbulb
+      name: ' '
+    icon: '[[[ return variables.icon ]]]'
+    name: '[[[ return variables.name ]]]'
+    double_tap_action:
+      action: more-info
+      entity: '[[[ return variables.light ]]]'
+    styles:
+      icon:
+        - opacity: |
+            [[[
+              if (states[variables.switch].state == 'off') return 1;
+              var bri = states[variables.light].attributes.brightness / 255;
+              return bri;
+            ]]]
+        - color: |
+            [[[
+              if (states[variables.switch].state == 'off') return '#000000';
+              var color = states[variables.light].attributes.rgb_color;
+              if (typeof color === "undefined") return '#000000';
+              return "rgb(" + color[0] + ", " + color[1] + ", " + color[2] + ")";
+            ]]]
+
+  climate_button_tpl:
+    variables:
+      co2: ''
+      humidity: ''
+      temp: ''
+      climate_state: ''
+      climate_value: ''
+    icon: ' '
+    name: ' '
+    styles:
+      grid:
+        - position: relative
+      custom_fields:
+        climate:
+          - position: absolute
+          - left: 10%
+          - top: 10%
+        temp:
+          - position: absolute
+          - right: 12px
+          - top: 1%
+        hum:
+          - position: absolute
+          - top: 31%
+          - right: 12px
+        co2:
+          - position: absolute
+          - right: 12px
+          - top: 61%
+          - '--text-color-sensor': |
+              [[[ 
+                if (states[variables.co2].state > 900) return "red"; 
+                if (states[variables.co2].state > 600) return "orange"; 
+                return "rgb(68, 115, 158)";
+              ]]]
+    tap_action:
+      action: call-service
+      service: input_boolean.toggle
+      service_data:
+        entity_id: '[[[ return variables.climate_state ]]]'
+    custom_fields:
+      climate: | 
+        [[[
+          var value = '---';
+          if (states[variables.climate_state].state === 'on') value = parseInt(states[variables.climate_value].state).toString() + ' °C';
+          return `<span style="color: rgb(68, 115, 158); font-size: 2em">${value}</span>`;
+        ]]]
+      temp: |
+        [[[
+          return `<span style="color: rgb(68, 115, 158);">${states[variables.temp].state} °C</span>`
+        ]]]
+      hum: |
+        [[[
+          return `<span style="color: rgb(68, 115, 158);">${states[variables.humidity].state} %</span>`
+        ]]]
+      co2: |
+        [[[
+          return `<span style="color: var(--text-color-sensor);">${parseInt(states[variables.co2].state)} CO₂</span>`
+        ]]]
+
+  air_button_tpl:
+    variables:
+      co2: ''
+      humidity: ''
+      temp: ''
+    icon: '[[[ return variables.icon ]]]'
+    name: ' '
+    styles:
+      grid:
+        - grid-template-areas: '". . n . ." "temp . hum . co2"'
+        - grid-template-columns: min-content 1fr min-content 1fr min-content
+        - grid-template-rows: min-content min-content
+      custom_fields:
+        temp:
+          - align-self: middle
+          - justify-self: middle
+        hum:
+          - align-self: middle
+          - justify-self: middle
+        co2:
+          - align-self: middle
+          - justify-self: middle
+          - '--text-color-sensor': |
+              [[[ 
+                if (states[variables.co2].state > 900) return "red"; 
+                if (states[variables.co2].state > 600) return "orange"; 
+                return "rgb(68, 115, 158)";
+              ]]]
+    custom_fields:
+      temp: |
+        [[[
+          return `<span style="color: rgb(68, 115, 158);">${states[variables.temp].state} °C</span>`
+        ]]]
+      hum: |
+        [[[
+          return `<span style="color: rgb(68, 115, 158);">${states[variables.humidity].state} %</span>`
+        ]]]
+      co2: |
+        [[[
+          return `<span style="color: var(--text-color-sensor);">${parseInt(states[variables.co2].state)} CO₂</span>`
+        ]]]
+
+views:
+  - theme: Backend-selected
+    icon: mdi:view-dashboard
+    badges: []
+    cards:
+      - type: grid
+        columns: 3
+        square: true
+        cards:
+          - type: custom:button-card
+            entity: switch.light_all
+            triggers_update: switch.fan_all
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+            styles:
+              icon:
+                - color: |
+                    [[[ 
+                      return (entity.state === 'off')? '#AAAAAA' : 'rgb(68, 115, 158)'; 
+                    ]]]
+            name: |
+              [[[
+                if (entity.state === 'on') return 'Працює';
+                if (states['switch.fan_all'].state === 'on') return 'Вентилятори';
+                return 'Вимкнено';
+              ]]]
+            icon: |
+              [[[
+                var icon = 'power-off';
+                if (entity.state === 'on') {
+                  icon = 'power';
+                } else {
+                  if (states['switch.fan_all'].state === 'on') icon = 'power-settings';
+                }
+                return `mdi:${icon}`;
+              ]]]
+            tap_action:
+              action: |
+                [[[
+                  return (entity.state === 'on')? 'call-service' : 'none';
+                ]]]
+              service: switch.turn_off
+              service_data:
+                entity_id: switch.light_all
+            hold_action:
+              action: |
+                [[[
+                  return (entity.state === 'on' || states['switch.fan_all'].state === 'on')? 'call-service' : 'none';
+                ]]]
+              service: switch.turn_off
+              service_data:
+                entity_id: switch.light_fan_all
+
+          - type: custom:button-card
+            entity: switch.fan_all
+            aspect_ratio: 1/1
+            name: |
+              [[[
+                return (entity.state === 'on')? 'Працює' : 'Вимкнено'
+              ]]]
+            template:
+              - cardg_bg_color
+            styles:
+              icon:
+                - color: |
+                    [[[ 
+                      return (entity.state === 'off')? '#AAAAAA' : 'rgb(68, 115, 158)'; 
+                    ]]]
+            icon: |
+              [[[
+                var icon = (entity.state === 'on')? 'fan' : 'fan-off';
+                return `mdi:${icon}`;
+              ]]]
+            tap_action:
+              action: |
+                [[[
+                  return (entity.state === 'on')? 'call-service' : 'none';
+                ]]]
+              service: switch.turn_off
+              service_data:
+                entity_id: switch.fan_all
+
+          - type: custom:button-card
+            entity: vacuum.roborock_s6
+            aspect_ratio: 1/1
+            show_name: false
+            template:
+              - cardg_bg_color
+            custom_fields:
+              status: |
+                [[[
+                  var icon = 'dots-horizontal';
+                  if (entity.state === 'paused') icon = 'pause';
+                  if (entity.state === 'docked') icon = 'battery-charging';
+                  if (entity.state === 'cleaning') icon = 'broom';
+                  return `<ha-icon
+                    icon="mdi:${icon}"
+                    style="width: 24px; height: 24px; color: rgb(68, 115, 158);">
+                    </ha-icon>`
+                ]]]              
+            styles:
+              icon:
+                - color: rgb(68, 115, 158)
+              grid:
+                - position: relative
+              custom_fields:
+                status:
+                  - position: absolute
+                  - right: 12px
+                  - top: 12px
+            tap_action:
+              action: call-service
+              service: |
+                [[[
+                  if (entity.state !== 'cleaning') return 'vacuum.start';
+                  return 'vacuum.pause';
+                ]]]
+              service_data:
+                entity_id: vacuum.roborock_s6
+            hold_action:
+              action: call-service
+              service: vacuum.return_to_base
+              service_data:
+                entity_id: vacuum.roborock_s6
+            double_tap_action:
+              action: navigate
+              navigation_path: /lovelace-mobile/1
+
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            entity: switch.light_hallway
+            template:
+              - simple_light_button_tpl
+              - cardg_bg_color
+            variables:
+              name: Коридор
+          - type: custom:button-card
+            entity: switch.light_kitchen
+            template:
+              - simple_light_button_tpl
+              - cardg_bg_color
+            variables:
+              name: Кухня
+
+      - type: horizontal-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                name: Туалет
+                aspect_ratio: 1/1
+                template:
+                  - with_fan_button_tpl
+                  - light_button_tpl
+                  - cardg_bg_color
+                entity: switch.light_wc
+                triggers_update: light.wc
+                variables:
+                  switch: switch.light_wc
+                  fan_switch: switch.fan_wc
+                  light: light.wc
+              - type: custom:button-card
+                entity: switch.fan_wc
+                aspect_ratio: 1/1
+                template:
+                  - simple_light_button_tpl
+                  - cardg_bg_color
+                variables:
+                  icon: mdi:fan
+                  icon_on: mdi:fan-off
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                name: Ванна
+                aspect_ratio: 1/1
+                template:
+                  - with_fan_button_tpl
+                  - light_button_tpl
+                  - cardg_bg_color
+                entity: switch.light_bathroom_main
+                triggers_update: light.bathroom
+                variables:
+                  switch: switch.light_bathroom_main
+                  fan_switch: switch.fan_bathroom
+                  light: light.bathroom
+              - type: vertical-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 2/1
+                    entity: switch.fan_bathroom
+                    template:
+                      - simple_light_button_tpl
+                      - cardg_bg_color
+                    variables:
+                      icon: mdi:fan
+                      icon_on: mdi:fan-off
+                  - type: custom:button-card
+                    aspect_ratio: 2/1
+                    entity: switch.light_bathroom_secondary
+                    template:
+                      - simple_light_button_tpl
+                      - cardg_bg_color
+                    variables:
+                      icon: mdi:lightbulb-spot
+                      icon_on: mdi:lightbulb-spot-off
+
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            entity: switch.light_bedroom
+            name: Спальня
+            template:
+              - simple_light_button_tpl
+              - cardg_bg_color
+          - type: custom:button-card
+            name: '&nbsp;'
+            triggers_update:
+              - sensor.air_bedroom_co2
+              - sensor.air_bedroom_temp
+              - sensor.air_bedroom_humidity
+            template:
+              - climate_button_tpl
+              - cardg_bg_color
+            variables:
+              co2: sensor.air_bedroom_co2
+              temp: sensor.air_bedroom_temp
+              humidity: sensor.air_bedroom_humidity
+              climate_state: input_boolean.climate_bedroom
+              climate_value: input_number.climate_bedroom_temp
+
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            name: Вітальня
+            template:
+              - light_button_tpl
+              - cardg_bg_color
+            entity: switch.light_living_room
+            triggers_update: light.living_room
+            variables:
+              switch: switch.light_living_room
+              light: light.living_room
+              icon: mdi:lightbulb-group
+
+          - type: custom:button-card
+            name: '&nbsp;'
+            triggers_update:
+              - sensor.air_living_room_co2
+              - sensor.air_living_room_temp
+              - sensor.air_living_room_humidity
+            template:
+              - climate_button_tpl
+              - cardg_bg_color
+            variables:
+              co2: sensor.air_living_room_co2
+              temp: sensor.air_living_room_temp
+              humidity: sensor.air_living_room_humidity
+              climate_state: input_boolean.climate_living_room
+              climate_value: input_number.climate_living_room_temp
+
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            triggers_update:
+              - sensor.air_balcony_co2
+              - sensor.air_balcony_temp
+              - sensor.air_balcony_humidity
+            name: Балкон
+            show_name: true
+            template:
+              - air_button_tpl
+              - cardg_bg_color
+            variables:
+              co2: sensor.air_balcony_co2
+              temp: sensor.air_balcony_temp
+              humidity: sensor.air_balcony_humidity
+
+  - theme: Backend-selected
+    icon: mdi:robot-vacuum
+    badges: []
+    cards:
+      - type: grid
+        cards:
+          - show_name: true
+            show_icon: true
+            type: button
+            tap_action:
+              action: call-service
+              service: xiaomi_miio.vacuum_clean_segment
+              data:
+                segments:
+                  - 16
+              target:
+                entity_id: vacuum.roborock_s6
+            entity: ''
+            name: Коридор
+            icon: mdi:broom
+            hold_action:
+              action: none
+          - show_name: true
+            show_icon: true
+            type: button
+            tap_action:
+              action: call-service
+              service: xiaomi_miio.vacuum_clean_segment
+              data:
+                segments:
+                  - 16
+                  - 18
+                  - 19
+              target:
+                entity_id: vacuum.roborock_s6
+            entity: ''
+            name: Крім спальні
+            icon: mdi:vacuum
+            hold_action:
+              action: none
+          - show_name: true
+            show_icon: true
+            type: button
+            tap_action:
+              action: call-service
+              service: xiaomi_miio.vacuum_clean_segment
+              data:
+                segments:
+                  - 17
+              target:
+                entity_id: vacuum.roborock_s6
+            entity: ''
+            name: Спальня
+            icon: mdi:bed-double
+            hold_action:
+              action: none
+      - type: custom:xiaomi-vacuum-map-card
+        map_source:
+          camera: camera.xiaomi_cloud_map_extractor
+        calibration_source:
+          camera: true
+        entity: vacuum.roborock_s6
+        vacuum_platform: default
+        two_finger_pan: false
+        map_locked: true
