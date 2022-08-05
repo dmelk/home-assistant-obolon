@@ -1,0 +1,275 @@
+wallpanel_screensaver:
+  enabled: true
+  idle_time: 10
+  weather_entity: weather.obolon_home
+  image_url: ''
+  info_update_interval: 30
+  hour_12: false
+
+kiosk_mode:
+  user_settings:
+    - users:
+        - "Wallscreen"
+      hide_sidebar: true
+
+views:
+  - theme: Backend-selected
+    icon: mdi:floor-plan
+    badges: []
+    panel: true
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack  
+            cards:
+              - type: 'custom:floorplan-card'
+                full_height: true
+                config:
+                  image: /local/floorplan/wallscreen.svg
+                  stylesheet: /local/floorplan/wallscreen.css
+
+                  defaults:
+                      hover_action: none
+                      tap_action: none
+                      double_tap_action: none
+                      hold_action: none
+
+                  functions: |
+                    >
+                      return {
+                        fanClass: (fanEntity, lightEntity) => {
+                          var classes = [];
+                          if (entities[fanEntity].state === 'on') classes.push('spinning');
+                          if (entities[lightEntity].state === 'on') classes.push('dark-fan');
+                          return classes.join(' ');
+                        },
+
+                        lightStyles: (switchEntity, lightEntity) => {
+                          if (entities[switchEntity].state === 'off') return 'fill: #000000; fill-opacity: 0.5';
+                          var rgbColor = entities[lightEntity].attributes.rgb_color;
+                          var color = (typeof rgbColor === "undefined")? '#000000' : "rgb(" + rgbColor[0] + ", " + rgbColor[1] + ", " + rgbColor[2] + ")";
+                          var bri = states[lightEntity].attributes.brightness / 255 * 0.5;
+                          var opacity = bri.toString();
+
+                          return `fill: ${color}; fill-opacity: ${opacity}`;
+                        },
+                      };
+                  
+                  rules:
+                    - name: Bathroom Fan
+                      entity: switch.fan_bathroom
+                      element: switch.fan_bathroom
+                      tap_action: toggle
+                      state_action:
+                        service: floorplan.class_set
+                        service_data:
+                          class: |
+                            >
+                              return functions.fanClass('switch.fan_bathroom', 'switch.light_bathroom_main');
+
+                    - name: Bathroom light
+                      entity: switch.light_bathroom_main
+                      element: light.bathroom_main
+                      tap_action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: switch.fan_bathroom
+                            class: |
+                              >
+                              return functions.fanClass('switch.fan_bathroom', 'switch.light_bathroom_main');
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.bathroom_main
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_bathroom_main', 'light.bathroom');
+
+                    - name: Bathroom light bulb
+                      entity: light.bathroom
+                      state_action:
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.bathroom_main
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_bathroom_main', 'light.bathroom');
+
+                    - name: Bathroom light mirror
+                      entity: switch.light_bathroom_secondary
+                      element: light.bathroom_secondary
+                      tap_action: toggle
+                      state_action:
+                        service: floorplan.class_set
+                        service_data:
+                          class: |
+                            >
+                              return (entity.state === 'on')? 'light-on' : '';
+
+                    - name: WC Fan
+                      entity: switch.fan_wc
+                      element: switch.fan_wc
+                      tap_action: toggle
+                      state_action:
+                        service: floorplan.class_set
+                        service_data:
+                          class: |
+                            >
+                              return functions.fanClass('switch.fan_wc', 'switch.light_wc');
+
+                    - name: WC light
+                      entity: switch.light_wc
+                      element: light.wc
+                      tap_action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: switch.fan_wc
+                            class: |
+                              >
+                                return functions.fanClass('switch.fan_wc', 'switch.light_wc');
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.wc
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_wc', 'light.wc');
+
+                    - name: WC light bulb
+                      entity: light.wc
+                      state_action:
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.wc
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_wc', 'light.wc');
+
+                    - name: Hallway light
+                      entity: switch.light_hallway
+                      element: light.hallway
+                      tap_action: toggle
+                      state_action:
+                        service: floorplan.class_set
+                        service_data:
+                          class: |
+                            >
+                              return (entity.state === 'on')? 'light-on' : 'light-off';
+
+                    - name: Kitchen light
+                      entity: switch.light_kitchen
+                      element: light.kitchen
+                      tap_action: toggle
+                      state_action:
+                        service: floorplan.class_set
+                        service_data:
+                          class: |
+                            >
+                              return (entity.state === 'on')? 'light-on' : 'light-off';
+
+                    - name: Bedroom light
+                      entity: switch.light_bedroom
+                      element: light.bedroom
+                      tap_action: toggle
+                      state_action:
+                        service: floorplan.class_set
+                        service_data:
+                          class: |
+                            >
+                              return (entity.state === 'on')? 'light-on' : 'light-off';
+
+                    - name: Living room light
+                      entity: switch.light_living_room
+                      element: light.living_room
+                      tap_action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.living_room
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_living_room', 'light.living_room');
+
+                    - name: Living room light bulb
+                      entity: light.living_room
+                      state_action:
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.living_room
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_living_room', 'light.living_room');
+
+  - theme: Backend-selected
+    icon: mdi:robot-vacuum
+    badges: []
+    cards:
+      - type: grid
+        cards:
+          - show_name: true
+            show_icon: true
+            type: button
+            tap_action:
+              action: call-service
+              service: xiaomi_miio.vacuum_clean_segment
+              data:
+                segments:
+                  - 16
+              target:
+                entity_id: vacuum.roborock_s6
+            entity: ''
+            name: Коридор
+            icon: mdi:broom
+            hold_action:
+              action: none
+          - show_name: true
+            show_icon: true
+            type: button
+            tap_action:
+              action: call-service
+              service: xiaomi_miio.vacuum_clean_segment
+              data:
+                segments:
+                  - 16
+                  - 18
+                  - 19
+              target:
+                entity_id: vacuum.roborock_s6
+            entity: ''
+            name: Крім спальні
+            icon: mdi:vacuum
+            hold_action:
+              action: none
+          - show_name: true
+            show_icon: true
+            type: button
+            tap_action:
+              action: call-service
+              service: xiaomi_miio.vacuum_clean_segment
+              data:
+                segments:
+                  - 17
+              target:
+                entity_id: vacuum.roborock_s6
+            entity: ''
+            name: Спальня
+            icon: mdi:bed-double
+            hold_action:
+              action: none
+      - type: custom:xiaomi-vacuum-map-card
+        map_source:
+          camera: camera.xiaomi_cloud_map_extractor
+        calibration_source:
+          camera: true
+        entity: vacuum.roborock_s6
+        vacuum_platform: default
+        two_finger_pan: false
+        map_locked: false

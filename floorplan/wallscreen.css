@@ -1,0 +1,34 @@
+
+/* Light Control */
+
+.light-on{
+    fill: #FFFFFF !important;
+  }
+  
+  .light-off{
+    fill: #000000 !important;
+  }
+  
+/* Fan */
+
+.dark-fan {
+    fill: #000000 !important;
+}
+
+.spinning {
+    animation-name: spin;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
