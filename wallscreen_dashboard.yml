@@ -1,5 +1,5 @@
 wallpanel_screensaver:
-  enabled: false
+  enabled: true
   idle_time: 10
   weather_entity: weather.obolon_home
   image_url: ''
