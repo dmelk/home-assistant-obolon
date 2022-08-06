@@ -385,8 +385,8 @@ views:
                       [[[
                         var segments = [];
                         if (states['input_boolean.vacuum_hallway'].state === 'on') segments.push(16);
-                        if (states['input_boolean.vacuum_living_room'].state === 'on') segments.push(19);
-                        if (states['input_boolean.vacuum_kitchen'].state === 'on') segments.push(18);
+                        if (states['input_boolean.vacuum_living_room'].state === 'on') segments.push(18);
+                        if (states['input_boolean.vacuum_kitchen'].state === 'on') segments.push(19);
                         if (states['input_boolean.vacuum_bedroom'].state === 'on') segments.push(17);
                         return segments;
                       ]]]
