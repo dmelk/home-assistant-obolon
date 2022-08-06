@@ -1,6 +1,6 @@
 wallpanel_screensaver:
   enabled: true
-  idle_time: 10
+  idle_time: 60
   weather_entity: weather.obolon_home
   image_url: ''
   info_update_interval: 30
@@ -9,7 +9,7 @@ wallpanel_screensaver:
     start_time: '22:00'
     end_time: '06:00'
     black_screen_after_time: 15
-    idle_time: 10
+    idle_time: 60
     info_update_interval: 30
 
 
