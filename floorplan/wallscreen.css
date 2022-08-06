@@ -1,3 +1,15 @@
+/* General */
+
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Buttons */
+
+.btn-power-on {
+  fill: #008800 !important;
+}
 
 /* Light Control */
 
@@ -10,10 +22,6 @@
   }
   
 /* Fan */
-
-.dark-fan {
-    fill: #000000 !important;
-}
 
 .spinning {
     animation-name: spin;

@@ -1,10 +1,17 @@
 wallpanel_screensaver:
-  enabled: true
+  enabled: false
   idle_time: 10
   weather_entity: weather.obolon_home
   image_url: ''
   info_update_interval: 30
   hour_12: false
+  night_mode:
+    start_time: '22:00'
+    end_time: '06:00'
+    black_screen_after_time: 15
+    idle_time: 10
+    info_update_interval: 30
+
 
 kiosk_mode:
   user_settings:
@@ -37,13 +44,6 @@ views:
                   functions: |
                     >
                       return {
-                        fanClass: (fanEntity, lightEntity) => {
-                          var classes = [];
-                          if (entities[fanEntity].state === 'on') classes.push('spinning');
-                          if (entities[lightEntity].state === 'on') classes.push('dark-fan');
-                          return classes.join(' ');
-                        },
-
                         lightStyles: (switchEntity, lightEntity) => {
                           if (entities[switchEntity].state === 'off') return 'fill: #000000; fill-opacity: 0.5';
                           var rgbColor = entities[lightEntity].attributes.rgb_color;
@@ -53,19 +53,27 @@ views:
 
                           return `fill: ${color}; fill-opacity: ${opacity}`;
                         },
+                        airTextWithCO2: (tempEntity, humEntity, co2Entity) => {
+                          if (entities[tempEntity].state === undefined) return 'Sensor offline';
+
+                          return `${entities[tempEntity].state}° ${entities[humEntity].state}% ${parseInt(entities[co2Entity].state)} CO₂`;
+                        },
                       };
                   
                   rules:
-                    - name: Bathroom Fan
-                      entity: switch.fan_bathroom
-                      element: switch.fan_bathroom
+                    - name: Fans
+                      entities:
+                        - entity: switch.fan_bathroom
+                          element: switch.fan_bathroom
+                        - entity: switch.fan_wc
+                          element: switch.fan_wc
                       tap_action: toggle
                       state_action:
                         service: floorplan.class_set
                         service_data:
                           class: |
                             >
-                              return functions.fanClass('switch.fan_bathroom', 'switch.light_bathroom_main');
+                              return (entity.state === 'on')? 'spinning' : '';
 
                     - name: Bathroom light
                       entity: switch.light_bathroom_main
@@ -75,10 +83,10 @@ views:
                         - action: call-service
                           service: floorplan.class_set
                           service_data:
-                            element: switch.fan_bathroom
+                            element: button.light_bathroom
                             class: |
                               >
-                              return functions.fanClass('switch.fan_bathroom', 'switch.light_bathroom_main');
+                              return (entity.state === 'on')? '' : 'hidden';
                         - action: call-service
                           service: floorplan.style_set
                           service_data:
@@ -89,6 +97,8 @@ views:
 
                     - name: Bathroom light bulb
                       entity: light.bathroom
+                      element: button.light_bathroom
+                      tap_action: more-info
                       state_action:
                         - action: call-service
                           service: floorplan.style_set
@@ -109,17 +119,6 @@ views:
                             >
                               return (entity.state === 'on')? 'light-on' : '';
 
-                    - name: WC Fan
-                      entity: switch.fan_wc
-                      element: switch.fan_wc
-                      tap_action: toggle
-                      state_action:
-                        service: floorplan.class_set
-                        service_data:
-                          class: |
-                            >
-                              return functions.fanClass('switch.fan_wc', 'switch.light_wc');
-
                     - name: WC light
                       entity: switch.light_wc
                       element: light.wc
@@ -128,10 +127,10 @@ views:
                         - action: call-service
                           service: floorplan.class_set
                           service_data:
-                            element: switch.fan_wc
+                            element: button.light_wc
                             class: |
                               >
-                                return functions.fanClass('switch.fan_wc', 'switch.light_wc');
+                              return (entity.state === 'on')? '' : 'hidden';
                         - action: call-service
                           service: floorplan.style_set
                           service_data:
@@ -142,6 +141,8 @@ views:
 
                     - name: WC light bulb
                       entity: light.wc
+                      element: button.light_wc
+                      tap_action: more-info
                       state_action:
                         - action: call-service
                           service: floorplan.style_set
@@ -190,6 +191,13 @@ views:
                       tap_action: toggle
                       state_action:
                         - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: button.light_living_room
+                            class: |
+                              >
+                              return (entity.state === 'on')? '' : 'hidden';
+                        - action: call-service
                           service: floorplan.style_set
                           service_data:
                             element: light.living_room
@@ -199,6 +207,8 @@ views:
 
                     - name: Living room light bulb
                       entity: light.living_room
+                      element: button.light_living_room
+                      tap_action: more-info
                       state_action:
                         - action: call-service
                           service: floorplan.style_set
@@ -208,68 +218,183 @@ views:
                               >
                                 return functions.lightStyles('switch.light_living_room', 'light.living_room');
 
+                    - name: Bedroom air
+                      entities:
+                        - entity: sensor.air_bedroom_temp
+                        - entity: sensor.air_bedroom_humidity
+                        - entity: sensor.air_bedroom_co2
+                      state_action:
+                        - action: call-service
+                          service: floorplan.text_set
+                          service_data:
+                            element: air.bedroom
+                            text: |
+                              >
+                                return functions.airTextWithCO2('sensor.air_bedroom_temp', 'sensor.air_bedroom_humidity', 'sensor.air_bedroom_co2');
+
+                    - name: Balcony air
+                      entities:
+                        - entity: sensor.air_balcony_temp
+                        - entity: sensor.air_balcony_humidity
+                        - entity: sensor.air_balcony_co2
+                      state_action:
+                        - action: call-service
+                          service: floorplan.text_set
+                          service_data:
+                            element: air.balcony
+                            text: |
+                              >
+                                return functions.airTextWithCO2('sensor.air_balcony_temp', 'sensor.air_balcony_humidity', 'sensor.air_balcony_co2');
+
+                    - name: Living room air
+                      entities:
+                        - entity: sensor.air_living_room_temp
+                        - entity: sensor.air_living_room_humidity
+                        - entity: sensor.air_living_room_co2
+                      state_action:
+                        - action: call-service
+                          service: floorplan.text_set
+                          service_data:
+                            element: air.living_room
+                            text: |
+                              >
+                                return functions.airTextWithCO2('sensor.air_living_room_temp', 'sensor.air_living_room_humidity', 'sensor.air_living_room_co2');
+
+                    - name: Robot vacuum
+                      element: button.robot_vacuum
+                      tap_action:
+                        action: navigate
+                        navigation_path: /lovelace-wallscreen/1
+                      double_tap_action:
+                        action: call-service
+                        service: vacuum.start
+                        service_data:
+                          entity_id: vacuum.roborock_s6
+
+                    - name: Living room climate btn
+                      entity: input_boolean.climate_living_room
+                      element: button.climate_living_room
+                      tap_action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.climate_living_room
+                            class: |
+                              >
+                                return (entity.state === 'on')? 'btn-power-on' : '';
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: button.climate_val_living_room
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+
+                    - name: Living room climate value btn
+                      entity: input_number.climate_living_room_temp
+                      element: button.climate_val_living_room
+                      state_action:
+                        - action: call-service
+                          service: floorplan.text_set
+                          service_data:
+                            element: value.climate_living_room
+                            text: |
+                              >
+                                return `${parseInt(entity.state)}°`;
+
+                    - name: Bedroom climate btn
+                      entity: input_boolean.climate_bedroom
+                      element: button.climate_bedroom
+                      tap_action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.climate_bedroom
+                            class: |
+                              >
+                                return (entity.state === 'on')? 'btn-power-on' : '';
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: button.climate_val_bedroom
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+
+                    - name: Bedroom climate value btn
+                      entity: input_number.climate_bedroom_temp
+                      element: button.climate_val_bedroom
+                      state_action:
+                        - action: call-service
+                          service: floorplan.text_set
+                          service_data:
+                            element: value.climate_bedroom
+                            text: |
+                              >
+                                return `${parseInt(entity.state)}°`;
+
   - theme: Backend-selected
     icon: mdi:robot-vacuum
     badges: []
+    panel: true
     cards:
       - type: grid
-        cards:
-          - show_name: true
-            show_icon: true
-            type: button
-            tap_action:
-              action: call-service
-              service: xiaomi_miio.vacuum_clean_segment
-              data:
-                segments:
-                  - 16
-              target:
-                entity_id: vacuum.roborock_s6
-            entity: ''
-            name: Коридор
-            icon: mdi:broom
-            hold_action:
-              action: none
-          - show_name: true
-            show_icon: true
-            type: button
-            tap_action:
-              action: call-service
-              service: xiaomi_miio.vacuum_clean_segment
-              data:
-                segments:
-                  - 16
-                  - 18
-                  - 19
-              target:
-                entity_id: vacuum.roborock_s6
-            entity: ''
-            name: Крім спальні
-            icon: mdi:vacuum
-            hold_action:
-              action: none
-          - show_name: true
-            show_icon: true
-            type: button
-            tap_action:
-              action: call-service
-              service: xiaomi_miio.vacuum_clean_segment
-              data:
-                segments:
-                  - 17
-              target:
-                entity_id: vacuum.roborock_s6
-            entity: ''
-            name: Спальня
-            icon: mdi:bed-double
-            hold_action:
-              action: none
-      - type: custom:xiaomi-vacuum-map-card
-        map_source:
-          camera: camera.xiaomi_cloud_map_extractor
-        calibration_source:
-          camera: true
-        entity: vacuum.roborock_s6
-        vacuum_platform: default
-        two_finger_pan: false
-        map_locked: false
+        columns: 2
+        cards: 
+          - type: custom:xiaomi-vacuum-map-card
+            map_source:
+              camera: camera.xiaomi_cloud_map_extractor
+            calibration_source:
+              camera: true
+            entity: vacuum.roborock_s6
+            vacuum_platform: default
+            two_finger_pan: false
+            map_locked: false
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                icon: mdi:broom
+                name: Прибирання кімнат
+                styles:
+                  icon:
+                    - color: |
+                        [[[
+                          var hasRoom = false;
+                          if (states['input_boolean.vacuum_hallway'].state === 'on') hasRoom = true;
+                          if (states['input_boolean.vacuum_living_room'].state === 'on') hasRoom = true;
+                          if (states['input_boolean.vacuum_kitchen'].state === 'on') hasRoom = true;
+                          if (states['input_boolean.vacuum_bedroom'].state === 'on') hasRoom = true;
+                          return (hasRoom)? 'rgb(68, 115, 158)' : '#AAAAAA';
+                        ]]]
+                tap_action:
+                  action: |
+                    [[[
+                      var hasRoom = false;
+                      if (states['input_boolean.vacuum_hallway'].state === 'on') hasRoom = true;
+                      if (states['input_boolean.vacuum_living_room'].state === 'on') hasRoom = true;
+                      if (states['input_boolean.vacuum_kitchen'].state === 'on') hasRoom = true;
+                      if (states['input_boolean.vacuum_bedroom'].state === 'on') hasRoom = true;
+                      return (hasRoom)? 'call-service' : 'none';
+                    ]]]
+                  service: xiaomi_miio.vacuum_clean_segment
+                  service_data:
+                    entity_id: vacuum.roborock_s6
+                    segments: |
+                      [[[
+                        var segments = [];
+                        if (states['input_boolean.vacuum_hallway'].state === 'on') segments.push(16);
+                        if (states['input_boolean.vacuum_living_room'].state === 'on') segments.push(19);
+                        if (states['input_boolean.vacuum_kitchen'].state === 'on') segments.push(18);
+                        if (states['input_boolean.vacuum_bedroom'].state === 'on') segments.push(17);
+                        return segments;
+                      ]]]
+              - type: entities
+                title: Кімнати
+                entities:
+                  - entity: input_boolean.vacuum_hallway
+                  - entity: input_boolean.vacuum_living_room
+                  - entity: input_boolean.vacuum_kitchen
+                  - entity: input_boolean.vacuum_bedroom
+
