@@ -1,0 +1,14 @@
+/* General */
+
+.hidden {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+.vacuum-area-disabled {
+    fill: #AAAAAA !important;
+}
+
+.vacuum-area-enabled {
+    fill: #00FF00 !important;
+}

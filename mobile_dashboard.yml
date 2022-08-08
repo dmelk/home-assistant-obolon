@@ -508,3 +508,69 @@ views:
         vacuum_platform: default
         two_finger_pan: false
         map_locked: true
+      - type: custom:button-card
+        icon: mdi:broom
+        layout: icon_name
+        aspect_ratio: 8/1
+        name: Прибирання кімнат
+        styles:
+          icon:
+            - color: |
+                [[[
+                  var hasRoom = false;
+                  if (states['input_boolean.vacuum_hallway'].state === 'on') hasRoom = true;
+                  if (states['input_boolean.vacuum_living_room'].state === 'on') hasRoom = true;
+                  if (states['input_boolean.vacuum_kitchen'].state === 'on') hasRoom = true;
+                  if (states['input_boolean.vacuum_bedroom'].state === 'on') hasRoom = true;
+                  return (hasRoom)? 'rgb(68, 115, 158)' : '#AAAAAA';
+                ]]]
+        tap_action:
+          action: |
+            [[[
+              var hasRoom = false;
+              if (states['input_boolean.vacuum_hallway'].state === 'on') hasRoom = true;
+              if (states['input_boolean.vacuum_living_room'].state === 'on') hasRoom = true;
+              if (states['input_boolean.vacuum_kitchen'].state === 'on') hasRoom = true;
+              if (states['input_boolean.vacuum_bedroom'].state === 'on') hasRoom = true;
+              return (hasRoom)? 'call-service' : 'none';
+            ]]]
+          service: xiaomi_miio.vacuum_clean_segment
+          service_data:
+            entity_id: vacuum.roborock_s6
+            segments: |
+              [[[
+                var segments = [];
+                if (states['input_boolean.vacuum_hallway'].state === 'on') segments.push(16);
+                if (states['input_boolean.vacuum_living_room'].state === 'on') segments.push(18);
+                if (states['input_boolean.vacuum_kitchen'].state === 'on') segments.push(19);
+                if (states['input_boolean.vacuum_bedroom'].state === 'on') segments.push(17);
+                return segments;
+              ]]]
+      - type: 'custom:floorplan-card'
+        config:
+          image: /local/floorplan/vacuum-plan.svg
+          stylesheet: /local/floorplan/vacuum-plan.css
+
+          defaults:
+              hover_action: none
+              tap_action: toggle
+              double_tap_action: none
+              hold_action: none
+
+          rules:
+            - name: Areas
+              entities:
+                - entity: input_boolean.vacuum_hallway
+                  element: hallway
+                - entity: input_boolean.vacuum_kitchen
+                  element: kitchen
+                - entity: input_boolean.vacuum_living_room
+                  element: living_room
+                - entity: input_boolean.vacuum_bedroom
+                  element: bedroom
+              state_action:
+                service: floorplan.class_set
+                service_data:
+                  class: |
+                    >
+                      return (entity.state === 'on')? 'vacuum-area-enabled' : 'vacuum-area-disabled';
