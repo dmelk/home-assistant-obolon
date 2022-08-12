@@ -2,7 +2,10 @@ button_card_templates:
   cardg_bg_color:
     styles:
       card:
-        - background-color: '#EEEEEE'
+        - background-color: |
+            [[[
+              return (hass.themes.darkMode)? '#333333' : '#EEEEEE';
+            ]]]
 
   simple_light_button_tpl:
     variables:
@@ -209,7 +212,7 @@ views:
               service: switch.turn_off
               service_data:
                 entity_id: switch.light_all
-            hold_action:
+            double_tap_action:
               action: |
                 [[[
                   return (entity.state === 'on' || states['switch.fan_all'].state === 'on')? 'call-service' : 'none';
