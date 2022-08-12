@@ -359,6 +359,9 @@ views:
                 map_locked: false
           - type: vertical-stack
             cards:
+              - type: custom:more-info-card
+                entity: vacuum.roborock_s6
+                title: " " 
               - type: custom:button-card
                 icon: mdi:broom
                 layout: icon_name

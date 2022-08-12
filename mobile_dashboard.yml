@@ -508,6 +508,9 @@ views:
         vacuum_platform: default
         two_finger_pan: false
         map_locked: true
+      - type: custom:more-info-card
+        entity: vacuum.roborock_s6
+        title: " " 
       - type: custom:button-card
         icon: mdi:broom
         layout: icon_name
