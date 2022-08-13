@@ -11,14 +11,11 @@ wallpanel_screensaver:
     black_screen_after_time: 15
     idle_time: 60
     info_update_interval: 30
-
-
 kiosk_mode:
   user_settings:
     - users:
-        - "Wallscreen"
+        - Wallscreen
       hide_sidebar: true
-
 views:
   - theme: Backend-selected
     icon: mdi:floor-plan
@@ -27,20 +24,18 @@ views:
     cards:
       - type: vertical-stack
         cards:
-          - type: horizontal-stack  
+          - type: horizontal-stack
             cards:
-              - type: 'custom:floorplan-card'
+              - type: custom:floorplan-card
                 full_height: true
                 config:
                   image: /local/floorplan/wallscreen.svg
                   stylesheet: /local/floorplan/wallscreen.css
-
                   defaults:
-                      hover_action: none
-                      tap_action: none
-                      double_tap_action: none
-                      hold_action: none
-
+                    hover_action: none
+                    tap_action: none
+                    double_tap_action: none
+                    hold_action: none
                   functions: |
                     >
                       return {
@@ -59,7 +54,6 @@ views:
                           return `${entities[tempEntity].state}° ${entities[humEntity].state}% ${parseInt(entities[co2Entity].state)} CO₂`;
                         },
                       };
-                  
                   rules:
                     - name: Fans
                       entities:
@@ -74,19 +68,34 @@ views:
                           class: |
                             >
                               return (entity.state === 'on')? 'spinning' : '';
-
                     - name: Bathroom light
                       entity: switch.light_bathroom_main
                       element: light.bathroom_main
                       tap_action: toggle
+                      double_tap_action:
+                        - action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: Ванна
+                            card:
+                              type: vertical-stack
+                              cards:
+                                - type: entities
+                                  entities:
+                                    - entity: switch.light_bathroom_main
+                                    - entity: switch.light_bathroom_secondary
+                                    - entity: switch.fan_bathroom
+                                - type: conditional
+                                  conditions:
+                                    - entity: switch.light_bathroom_main
+                                      state: 'on'
+                                  card:
+                                    type: custom:more-info-card
+                                    entity: light.bathroom
+                                    title: ' '
                       state_action:
                         - action: call-service
                           service: floorplan.class_set
-                          service_data:
-                            element: button.light_bathroom
-                            class: |
-                              >
-                              return (entity.state === 'on')? '' : 'hidden';
                         - action: call-service
                           service: floorplan.style_set
                           service_data:
@@ -94,11 +103,8 @@ views:
                             style: |
                               >
                                 return functions.lightStyles('switch.light_bathroom_main', 'light.bathroom');
-
                     - name: Bathroom light bulb
                       entity: light.bathroom
-                      element: button.light_bathroom
-                      tap_action: more-info
                       state_action:
                         - action: call-service
                           service: floorplan.style_set
@@ -107,7 +113,6 @@ views:
                             style: |
                               >
                                 return functions.lightStyles('switch.light_bathroom_main', 'light.bathroom');
-
                     - name: Bathroom light mirror
                       entity: switch.light_bathroom_secondary
                       element: light.bathroom_secondary
@@ -118,19 +123,33 @@ views:
                           class: |
                             >
                               return (entity.state === 'on')? 'light-on' : '';
-
                     - name: WC light
                       entity: switch.light_wc
                       element: light.wc
+                      double_tap_action:
+                        - action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: Туалет
+                            card:
+                              type: vertical-stack
+                              cards:
+                                - type: entities
+                                  entities:
+                                    - entity: switch.light_wc
+                                    - entity: switch.fan_wc
+                                - type: conditional
+                                  conditions:
+                                    - entity: switch.light_wc
+                                      state: 'on'
+                                  card:
+                                    type: custom:more-info-card
+                                    entity: light.wc
+                                    title: ' '
                       tap_action: toggle
                       state_action:
                         - action: call-service
                           service: floorplan.class_set
-                          service_data:
-                            element: button.light_wc
-                            class: |
-                              >
-                              return (entity.state === 'on')? '' : 'hidden';
                         - action: call-service
                           service: floorplan.style_set
                           service_data:
@@ -138,11 +157,8 @@ views:
                             style: |
                               >
                                 return functions.lightStyles('switch.light_wc', 'light.wc');
-
                     - name: WC light bulb
                       entity: light.wc
-                      element: button.light_wc
-                      tap_action: more-info
                       state_action:
                         - action: call-service
                           service: floorplan.style_set
@@ -151,7 +167,6 @@ views:
                             style: |
                               >
                                 return functions.lightStyles('switch.light_wc', 'light.wc');
-
                     - name: Hallway light
                       entity: switch.light_hallway
                       element: light.hallway
@@ -162,7 +177,6 @@ views:
                           class: |
                             >
                               return (entity.state === 'on')? 'light-on' : 'light-off';
-
                     - name: Kitchen light
                       entity: switch.light_kitchen
                       element: light.kitchen
@@ -173,7 +187,6 @@ views:
                           class: |
                             >
                               return (entity.state === 'on')? 'light-on' : 'light-off';
-
                     - name: Bedroom light
                       entity: switch.light_bedroom
                       element: light.bedroom
@@ -184,19 +197,30 @@ views:
                           class: |
                             >
                               return (entity.state === 'on')? 'light-on' : 'light-off';
-
                     - name: Living room light
                       entity: switch.light_living_room
                       element: light.living_room
                       tap_action: toggle
-                      state_action:
+                      double_tap_action:
                         - action: call-service
-                          service: floorplan.class_set
+                          service: browser_mod.popup
                           service_data:
-                            element: button.light_living_room
-                            class: |
-                              >
-                              return (entity.state === 'on')? '' : 'hidden';
+                            title: Вітальня
+                            card:
+                              type: vertical-stack
+                              cards:
+                                - type: entities
+                                  entities:
+                                    - entity: switch.light_living_room
+                                - type: conditional
+                                  conditions:
+                                    - entity: switch.light_living_room
+                                      state: 'on'
+                                  card:
+                                    type: custom:more-info-card
+                                    entity: light.living_room
+                                    title: ' '
+                      state_action:
                         - action: call-service
                           service: floorplan.style_set
                           service_data:
@@ -204,10 +228,8 @@ views:
                             style: |
                               >
                                 return functions.lightStyles('switch.light_living_room', 'light.living_room');
-
                     - name: Living room light bulb
                       entity: light.living_room
-                      element: button.light_living_room
                       tap_action: more-info
                       state_action:
                         - action: call-service
@@ -217,7 +239,6 @@ views:
                             style: |
                               >
                                 return functions.lightStyles('switch.light_living_room', 'light.living_room');
-
                     - name: Bedroom air
                       entities:
                         - entity: sensor.air_bedroom_temp
@@ -231,7 +252,6 @@ views:
                             text: |
                               >
                                 return functions.airTextWithCO2('sensor.air_bedroom_temp', 'sensor.air_bedroom_humidity', 'sensor.air_bedroom_co2');
-
                     - name: Balcony air
                       entities:
                         - entity: sensor.air_balcony_temp
@@ -245,7 +265,6 @@ views:
                             text: |
                               >
                                 return functions.airTextWithCO2('sensor.air_balcony_temp', 'sensor.air_balcony_humidity', 'sensor.air_balcony_co2');
-
                     - name: Living room air
                       entities:
                         - entity: sensor.air_living_room_temp
@@ -259,7 +278,6 @@ views:
                             text: |
                               >
                                 return functions.airTextWithCO2('sensor.air_living_room_temp', 'sensor.air_living_room_humidity', 'sensor.air_living_room_co2');
-
                     - name: Robot vacuum
                       element: button.robot_vacuum
                       tap_action:
@@ -270,7 +288,6 @@ views:
                         service: vacuum.start
                         service_data:
                           entity_id: vacuum.roborock_s6
-
                     - name: Living room climate btn
                       entity: input_boolean.climate_living_room
                       element: button.climate_living_room
@@ -290,7 +307,6 @@ views:
                             class: |
                               >
                                 return (entity.state === 'on')? '' : 'hidden';
-
                     - name: Living room climate value btn
                       entity: input_number.climate_living_room_temp
                       element: button.climate_val_living_room
@@ -302,7 +318,6 @@ views:
                             text: |
                               >
                                 return `${parseInt(entity.state)}°`;
-
                     - name: Bedroom climate btn
                       entity: input_boolean.climate_bedroom
                       element: button.climate_bedroom
@@ -322,7 +337,6 @@ views:
                             class: |
                               >
                                 return (entity.state === 'on')? '' : 'hidden';
-
                     - name: Bedroom climate value btn
                       entity: input_number.climate_bedroom_temp
                       element: button.climate_val_bedroom
@@ -334,7 +348,6 @@ views:
                             text: |
                               >
                                 return `${parseInt(entity.state)}°`;
-
   - theme: Backend-selected
     icon: mdi:robot-vacuum
     badges: []
@@ -342,7 +355,7 @@ views:
     cards:
       - type: grid
         columns: 2
-        cards: 
+        cards:
           - type: vertical-stack
             cards:
               - type: custom:xiaomi-vacuum-map-card
@@ -361,7 +374,7 @@ views:
             cards:
               - type: custom:more-info-card
                 entity: vacuum.roborock_s6
-                title: " " 
+                title: ' '
               - type: custom:button-card
                 icon: mdi:broom
                 layout: icon_name
@@ -400,17 +413,15 @@ views:
                         if (states['input_boolean.vacuum_bedroom'].state === 'on') segments.push(17);
                         return segments;
                       ]]]
-              - type: 'custom:floorplan-card'
+              - type: custom:floorplan-card
                 config:
                   image: /local/floorplan/vacuum-plan.svg
                   stylesheet: /local/floorplan/vacuum-plan.css
-
                   defaults:
-                      hover_action: none
-                      tap_action: toggle
-                      double_tap_action: none
-                      hold_action: none
-
+                    hover_action: none
+                    tap_action: toggle
+                    double_tap_action: none
+                    hold_action: none
                   rules:
                     - name: Areas
                       entities:
