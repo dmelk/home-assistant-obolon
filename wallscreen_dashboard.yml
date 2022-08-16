@@ -170,33 +170,126 @@ views:
                     - name: Hallway light
                       entity: switch.light_hallway
                       element: light.hallway
+                      double_tap_action:
+                        - action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: Коридор
+                            card:
+                              type: vertical-stack
+                              cards:
+                                - type: entities
+                                  entities:
+                                    - entity: switch.light_hallway
+                                - type: conditional
+                                  conditions:
+                                    - entity: switch.light_hallway
+                                      state: 'on'
+                                  card:
+                                    type: custom:more-info-card
+                                    entity: light.hallway
+                                    title: ' '
                       tap_action: toggle
                       state_action:
-                        service: floorplan.class_set
-                        service_data:
-                          class: |
-                            >
-                              return (entity.state === 'on')? 'light-on' : 'light-off';
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.hallway
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_hallway', 'light.hallway');
+                    - name: Hallway light bulb
+                      entity: light.hallway
+                      state_action:
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.hallway
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_hallway', 'light.hallway');
                     - name: Kitchen light
                       entity: switch.light_kitchen
                       element: light.kitchen
+                      double_tap_action:
+                        - action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: Коридор
+                            card:
+                              type: vertical-stack
+                              cards:
+                                - type: entities
+                                  entities:
+                                    - entity: switch.light_kitchen
+                                - type: conditional
+                                  conditions:
+                                    - entity: switch.light_kitchen
+                                      state: 'on'
+                                  card:
+                                    type: custom:more-info-card
+                                    entity: light.kitchen
+                                    title: ' '
                       tap_action: toggle
                       state_action:
-                        service: floorplan.class_set
-                        service_data:
-                          class: |
-                            >
-                              return (entity.state === 'on')? 'light-on' : 'light-off';
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.kitchen
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_kitchen', 'light.kitchen');
+                    - name: Kitchen light bulb
+                      entity: light.kitchen
+                      state_action:
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.kitchen
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_kitchen', 'light.kitchen');
                     - name: Bedroom light
                       entity: switch.light_bedroom
                       element: light.bedroom
+                      double_tap_action:
+                        - action: call-service
+                          service: browser_mod.popup
+                          service_data:
+                            title: Коридор
+                            card:
+                              type: vertical-stack
+                              cards:
+                                - type: entities
+                                  entities:
+                                    - entity: switch.light_bedroom
+                                - type: conditional
+                                  conditions:
+                                    - entity: switch.light_bedroom
+                                      state: 'on'
+                                  card:
+                                    type: custom:more-info-card
+                                    entity: light.bedroom
+                                    title: ' '
                       tap_action: toggle
                       state_action:
-                        service: floorplan.class_set
-                        service_data:
-                          class: |
-                            >
-                              return (entity.state === 'on')? 'light-on' : 'light-off';
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.bedroom
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_bedroom', 'light.bedroom');
+                    - name: Bedroom light bulb
+                      entity: light.bedroom
+                      state_action:
+                        - action: call-service
+                          service: floorplan.style_set
+                          service_data:
+                            element: light.bedroom
+                            style: |
+                              >
+                                return functions.lightStyles('switch.light_bedroom', 'light.bedroom');
                     - name: Living room light
                       entity: switch.light_living_room
                       element: light.living_room
