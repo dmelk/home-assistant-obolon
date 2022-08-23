@@ -166,6 +166,33 @@ button_card_templates:
         [[[
           return `<span style="color: var(--text-color-sensor);">${parseInt(states[variables.co2].state)} CO₂</span>`
         ]]]
+  simple_air_button_tpl:
+    variables:
+      humidity: ''
+      temp: ''
+    icon: '[[[ return variables.icon ]]]'
+    name: ' '
+    styles:
+      grid:
+        - grid-template-areas: '". n ." "temp . hum "'
+        - grid-template-columns: min-content 1fr min-content
+        - grid-template-rows: min-content min-content
+      custom_fields:
+        temp:
+          - align-self: middle
+          - justify-self: middle
+        hum:
+          - align-self: middle
+          - justify-self: middle
+    custom_fields:
+      temp: |
+        [[[
+          return `<span style="color: rgb(68, 115, 158);">${states[variables.temp].state} °C</span>`
+        ]]]
+      hum: |
+        [[[
+          return `<span style="color: rgb(68, 115, 158);">${states[variables.humidity].state} %</span>`
+        ]]]
 
 views:
   - theme: Backend-selected
@@ -453,6 +480,18 @@ views:
               co2: sensor.air_balcony_co2
               temp: sensor.air_balcony_temp
               humidity: sensor.air_balcony_humidity
+          - type: custom:button-card
+            triggers_update:
+              - sensor.air_outdoor_temp
+              - sensor.air_outdoor_humidity
+            name: Вулиця
+            show_name: true
+            template:
+              - simple_air_button_tpl
+              - cardg_bg_color
+            variables:
+              temp: sensor.air_outdoor_temp
+              humidity: sensor.air_outdoor_humidity
 
   - theme: Backend-selected
     icon: mdi:robot-vacuum

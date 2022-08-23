@@ -5,6 +5,19 @@ wallpanel_screensaver:
   image_url: ''
   info_update_interval: 30
   hour_12: false
+  info_template: |
+    <div id="wallpanel-screensaver-info-weather">
+      <table>
+          <tr>
+              <th><img id="weather-temperature-icon" src="{{ filesParentPath }}/weather-icons/thermometer.svg"/></th>
+              <th>{{ states['sensor.air_outdoor_temp'].state }}°&ensp;</th>
+              <th><img id="weather-state-icon" src="{{ filesParentPath }}/weather-icons/{{ states[config.weather_entity].state }}-sun-{{ states["sun.sun"].state.replace("_", "-"); }}.svg"/></th>
+            <th>{{ states[config.weather_entity].state.replace(/(^|\s)[A-Za-zÀ-ÖØ-öø-ÿ]/g, c => c.toUpperCase()) }}</th>
+          </tr>
+      </table>
+    </div>
+    <div id="wallpanel-screensaver-info-time">{{ (new Date()).toLocaleTimeString(undefined, {hour: "2-digit", minute:"2-digit", hour12: config.hour_12}) }}</div>
+    <div id="wallpanel-screensaver-info-date">{{ (new Date()).toLocaleDateString(undefined, {weekday: "short", year: "numeric", month: "short", day: "numeric"}) }}</div>
   night_mode:
     start_time: '22:00'
     end_time: '06:00'
@@ -49,9 +62,14 @@ views:
                           return `fill: ${color}; fill-opacity: ${opacity}`;
                         },
                         airTextWithCO2: (tempEntity, humEntity, co2Entity) => {
-                          if (entities[tempEntity].state === undefined) return 'Sensor offline';
+                          if (entities[tempEntity].state === undefined) return 'Offline';
 
                           return `${entities[tempEntity].state}° ${entities[humEntity].state}% ${parseInt(entities[co2Entity].state)} CO₂`;
+                        },
+                        airText: (tempEntity, humEntity) => {
+                          if (entities[tempEntity].state === undefined) return 'Offline';
+
+                          return `${entities[tempEntity].state}° ${entities[humEntity].state}%`;
                         },
                       };
                   rules:
@@ -358,6 +376,18 @@ views:
                             text: |
                               >
                                 return functions.airTextWithCO2('sensor.air_balcony_temp', 'sensor.air_balcony_humidity', 'sensor.air_balcony_co2');
+                    - name: Outdoor air
+                      entities:
+                        - entity: sensor.air_outdoor_temp
+                        - entity: sensor.air_outdoor_humidity
+                      state_action:
+                        - action: call-service
+                          service: floorplan.text_set
+                          service_data:
+                            element: air.outdoor
+                            text: |
+                              >
+                                return functions.airText('sensor.air_outdoor_temp', 'sensor.air_outdoor_humidity');
                     - name: Living room air
                       entities:
                         - entity: sensor.air_living_room_temp
