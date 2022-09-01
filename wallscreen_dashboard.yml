@@ -186,7 +186,7 @@ views:
                               >
                                 return functions.lightStyles('switch.light_wc', 'light.wc');
                     - name: Hallway light
-                      entity: switch.light_hallway
+                      entity: light.hallway_light
                       element: light.hallway
                       double_tap_action:
                         - action: call-service
@@ -198,10 +198,10 @@ views:
                               cards:
                                 - type: entities
                                   entities:
-                                    - entity: switch.light_hallway
+                                    - entity: light.hallway_light
                                 - type: conditional
                                   conditions:
-                                    - entity: switch.light_hallway
+                                    - entity: light.hallway_light
                                       state: 'on'
                                   card:
                                     type: custom:more-info-card
@@ -215,7 +215,7 @@ views:
                             element: light.hallway
                             style: |
                               >
-                                return functions.lightStyles('switch.light_hallway', 'light.hallway');
+                                return functions.lightStyles('light.hallway_light', 'light.hallway');
                     - name: Hallway light bulb
                       entity: light.hallway
                       state_action:
@@ -225,7 +225,7 @@ views:
                             element: light.hallway
                             style: |
                               >
-                                return functions.lightStyles('switch.light_hallway', 'light.hallway');
+                                return functions.lightStyles('light.hallway_light', 'light.hallway');
                     - name: Kitchen light
                       entity: switch.light_kitchen
                       element: light.kitchen
@@ -268,7 +268,7 @@ views:
                               >
                                 return functions.lightStyles('switch.light_kitchen', 'light.kitchen');
                     - name: Bedroom light
-                      entity: switch.light_bedroom
+                      entity: light.bedroom_light
                       element: light.bedroom
                       double_tap_action:
                         - action: call-service
@@ -280,10 +280,10 @@ views:
                               cards:
                                 - type: entities
                                   entities:
-                                    - entity: switch.light_bedroom
+                                    - entity: light.bedroom_light
                                 - type: conditional
                                   conditions:
-                                    - entity: switch.light_bedroom
+                                    - entity: light.bedroom_light
                                       state: 'on'
                                   card:
                                     type: custom:more-info-card
@@ -297,7 +297,7 @@ views:
                             element: light.bedroom
                             style: |
                               >
-                                return functions.lightStyles('switch.light_bedroom', 'light.bedroom');
+                                return functions.lightStyles('light.bedroom_light', 'light.bedroom');
                     - name: Bedroom light bulb
                       entity: light.bedroom
                       state_action:
@@ -307,9 +307,9 @@ views:
                             element: light.bedroom
                             style: |
                               >
-                                return functions.lightStyles('switch.light_bedroom', 'light.bedroom');
+                                return functions.lightStyles('light.bedroom_light', 'light.bedroom');
                     - name: Living room light
-                      entity: switch.light_living_room
+                      entity: light.switch_living_room
                       element: light.living_room
                       tap_action: toggle
                       double_tap_action:
@@ -322,10 +322,10 @@ views:
                               cards:
                                 - type: entities
                                   entities:
-                                    - entity: switch.light_living_room
+                                    - entity: light.switch_living_room
                                 - type: conditional
                                   conditions:
-                                    - entity: switch.light_living_room
+                                    - entity: light.switch_living_room
                                       state: 'on'
                                   card:
                                     type: custom:more-info-card
@@ -338,7 +338,7 @@ views:
                             element: light.living_room
                             style: |
                               >
-                                return functions.lightStyles('switch.light_living_room', 'light.living_room');
+                                return functions.lightStyles('light.switch_living_room', 'light.living_room');
                     - name: Living room light bulb
                       entity: light.living_room
                       tap_action: more-info
@@ -349,7 +349,7 @@ views:
                             element: light.living_room
                             style: |
                               >
-                                return functions.lightStyles('switch.light_living_room', 'light.living_room');
+                                return functions.lightStyles('light.switch_living_room', 'light.living_room');
                     - name: Bedroom air
                       entities:
                         - entity: sensor.air_bedroom_temp

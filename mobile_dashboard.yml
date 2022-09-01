@@ -326,12 +326,12 @@ views:
       - type: horizontal-stack
         cards:
           - type: custom:button-card
-            entity: switch.light_hallway
+            entity: light.hallway_light
             template:
               - light_button_tpl
               - cardg_bg_color
             variables:
-              switch: switch.light_hallway
+              switch: light.hallway_light
               light: light.hallway
               name: Коридор
           - type: custom:button-card
@@ -409,13 +409,13 @@ views:
       - type: horizontal-stack
         cards:
           - type: custom:button-card
-            entity: switch.light_bedroom
+            entity: light.bedroom_light
             name: Спальня
             template:
               - light_button_tpl
               - cardg_bg_color
             variables:
-              switch: switch.light_bedroom
+              switch: light.bedroom_light
               light: light.bedroom
               icon: mdi:lightbulb-group
           - type: custom:button-card
@@ -441,10 +441,10 @@ views:
             template:
               - light_button_tpl
               - cardg_bg_color
-            entity: switch.light_living_room
+            entity: light.switch_living_room
             triggers_update: light.living_room
             variables:
-              switch: switch.light_living_room
+              switch: light.switch_living_room
               light: light.living_room
               icon: mdi:lightbulb-group
 
