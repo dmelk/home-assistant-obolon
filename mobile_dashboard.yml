@@ -204,7 +204,7 @@ views:
         square: true
         cards:
           - type: custom:button-card
-            entity: light.swicth_all
+            entity: light.switch_all
             triggers_update: light.fan_all
             aspect_ratio: 1/1
             template:
