@@ -204,8 +204,8 @@ views:
         square: true
         cards:
           - type: custom:button-card
-            entity: switch.light_all
-            triggers_update: switch.fan_all
+            entity: light.swicth_all
+            triggers_update: light.fan_all
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
@@ -218,7 +218,7 @@ views:
             name: |
               [[[
                 if (entity.state === 'on') return 'Працює';
-                if (states['switch.fan_all'].state === 'on') return 'Вентилятори';
+                if (states['light.fan_all'].state === 'on') return 'Вентилятори';
                 return 'Вимкнено';
               ]]]
             icon: |
@@ -227,7 +227,7 @@ views:
                 if (entity.state === 'on') {
                   icon = 'power';
                 } else {
-                  if (states['switch.fan_all'].state === 'on') icon = 'power-settings';
+                  if (states['light.fan_all'].state === 'on') icon = 'power-settings';
                 }
                 return `mdi:${icon}`;
               ]]]
@@ -236,20 +236,20 @@ views:
                 [[[
                   return (entity.state === 'on')? 'call-service' : 'none';
                 ]]]
-              service: switch.turn_off
+              service: light.turn_off
               service_data:
-                entity_id: switch.light_all
+                entity_id: light.switch_all
             double_tap_action:
               action: |
                 [[[
-                  return (entity.state === 'on' || states['switch.fan_all'].state === 'on')? 'call-service' : 'none';
+                  return (entity.state === 'on' || states['light.fan_all'].state === 'on')? 'call-service' : 'none';
                 ]]]
-              service: switch.turn_off
+              service: light.turn_off
               service_data:
-                entity_id: switch.light_fan_all
+                entity_id: light.switch_fan_all
 
           - type: custom:button-card
-            entity: switch.fan_all
+            entity: light.fan_all
             aspect_ratio: 1/1
             name: |
               [[[
@@ -273,9 +273,9 @@ views:
                 [[[
                   return (entity.state === 'on')? 'call-service' : 'none';
                 ]]]
-              service: switch.turn_off
+              service: light.turn_off
               service_data:
-                entity_id: switch.fan_all
+                entity_id: light.fan_all
 
           - type: custom:button-card
             entity: vacuum.roborock_s6
@@ -335,13 +335,13 @@ views:
               light: light.hallway
               name: Коридор
           - type: custom:button-card
-            entity: switch.light_kitchen
+            entity: light.kitchen_light
             template:
               - light_button_tpl
               - cardg_bg_color
             variables:
               name: Кухня
-              switch: switch.light_kitchen
+              switch: light.kitchen_light
               light: light.kitchen
 
       - type: horizontal-stack
@@ -355,14 +355,14 @@ views:
                   - with_fan_button_tpl
                   - light_button_tpl
                   - cardg_bg_color
-                entity: switch.light_wc
+                entity: light.wc_light
                 triggers_update: light.wc
                 variables:
-                  switch: switch.light_wc
-                  fan_switch: switch.fan_wc
+                  switch: light.wc_light
+                  fan_switch: light.fan_wc
                   light: light.wc
               - type: custom:button-card
-                entity: switch.fan_wc
+                entity: light.fan_wc
                 aspect_ratio: 1/1
                 template:
                   - simple_light_button_tpl
@@ -379,17 +379,17 @@ views:
                   - with_fan_button_tpl
                   - light_button_tpl
                   - cardg_bg_color
-                entity: switch.light_bathroom_main
+                entity: light.bathroom_light_main
                 triggers_update: light.bathroom
                 variables:
-                  switch: switch.light_bathroom_main
-                  fan_switch: switch.fan_bathroom
+                  switch: light.bathroom_light_main
+                  fan_switch: light.fan_bathroom
                   light: light.bathroom
               - type: vertical-stack
                 cards:
                   - type: custom:button-card
                     aspect_ratio: 2/1
-                    entity: switch.fan_bathroom
+                    entity: light.fan_bathroom
                     template:
                       - simple_light_button_tpl
                       - cardg_bg_color
@@ -398,7 +398,7 @@ views:
                       icon_on: mdi:fan-off
                   - type: custom:button-card
                     aspect_ratio: 2/1
-                    entity: switch.light_bathroom_secondary
+                    entity: light.bathroom_light_secondary
                     template:
                       - simple_light_button_tpl
                       - cardg_bg_color
