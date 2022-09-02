@@ -29,7 +29,7 @@ button_card_templates:
       action: call-service
       service: |
         [[[
-          return (states[variables.switch].state === 'on')? 'switch.turn_off' : 'switch.turn_on'
+          return (states[variables.switch].state === 'on')? 'light.turn_off' : 'light.turn_on'
         ]]]
       service_data:
         entity_id:
