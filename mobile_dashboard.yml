@@ -260,8 +260,8 @@ button_card_templates:
           return leftTime[0].padStart(2, '0') + ':' + leftTime[1];
         }
         var leftSeconds = Math.floor(((new Date(entity.attributes.finishes_at)).getTime() - (new Date()).getTime()) / 1000),
-          leftHours = Math.floor(leftSeconds / 3600),
-          leftMinutes = Math.ceil(leftSeconds / 60) - leftHours * 60;
+          leftHours = Math.ceil(leftSeconds / 3600),
+          leftMinutes = Math.ceil(leftSeconds / 60) - Math.floor(leftSeconds / 3600) * 60;
         
         return String(leftHours).padStart(2, '0') + ':' + String(leftMinutes).padStart(2, '0');
       ]]]
