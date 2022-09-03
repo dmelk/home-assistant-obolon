@@ -7,6 +7,17 @@ button_card_templates:
               return (hass.themes.darkMode)? '#333333' : '#EEEEEE';
             ]]]
 
+  icon_color:
+    styles:
+      icon:
+        - color: rgb(68, 115, 158)
+
+  icon_radiator:
+    icon: |
+      [[[ 
+        return (entity.state === 'on')? 'mdi:radiator' : 'mdi:radiator-disabled';
+      ]]]
+
   simple_light_button_tpl:
     variables:
       icon: mdi:lightbulb-off
@@ -193,6 +204,97 @@ button_card_templates:
         [[[
           return `<span style="color: rgb(68, 115, 158);">${states[variables.humidity].state} %</span>`
         ]]]
+  
+  time_increment_tpl:
+    variables:
+      entity: ''
+    icon: mdi:plus
+    tap_action:
+      action: call-service
+      service: input_number.increment
+      service_data:
+        entity_id:
+          - '[[[ return variables.entity ]]]'
+  time_decrement_tpl:
+    variables:
+      entity: ''
+    icon: mdi:minus
+    tap_action:
+      action: call-service
+      service: input_number.decrement
+      service_data:
+        entity_id:
+          - '[[[ return variables.entity ]]]'
+  time_view_tpl:
+    variables:
+      unit: ''
+    show_icon: false
+    name: |
+      [[[ 
+        return String(parseInt(entity.state)).padStart(2, '0') + ' ' + variables.unit;
+      ]]]
+  
+  stop_timer_tpl:
+    variables:
+      switch: ''
+      min: ''
+      hour: ''
+      entity: ''
+    aspect_ratio: 3/1
+    layout: icon_name
+    icon: |
+      [[[ 
+        if (states[variables.switch].state === 'off') return 'mdi:timer-off-outline';
+        return (entity.state === 'active')? 'mdi:timer-pause-outline' : 'mdi:timer-play-outline';
+      ]]]
+    name: |
+      [[[ 
+        if (entity.state === 'idle') {
+          var minutes = String(parseInt(states[variables.min].state)).padStart(2, '0'),
+            hours = String(parseInt(states[variables.hour].state)).padStart(2, '0');
+
+          return hours + ':' + minutes;
+        }
+        if (entity.state === 'paused') {
+          var leftTime = entity.attributes.remaining.split(':');
+          return leftTime[0].padStart(2, '0') + ':' + leftTime[1];
+        }
+        var leftSeconds = Math.floor(((new Date(entity.attributes.finishes_at)).getTime() - (new Date()).getTime()) / 1000),
+          leftHours = Math.floor(leftSeconds / 3600),
+          leftMinutes = Math.ceil(leftSeconds / 60) - leftHours * 60;
+        
+        return String(leftHours).padStart(2, '0') + ':' + String(leftMinutes).padStart(2, '0');
+      ]]]
+    tap_action:
+      action: |
+        [[[ 
+          return (states[variables.switch].state === 'off')? 'none' : 'call-service';
+        ]]]
+      service: |
+        [[[
+          return (entity.state === 'idle' || entity.state === 'paused')? 'timer.start' : 'timer.pause';
+        ]]]
+      service_data: |
+        [[[
+          if (entity.state === 'idle') {
+            var minutes = parseInt(states[variables.min].state),
+              hours = parseInt(states[variables.hour].state),
+              duration = minutes*60 + hours*3600;
+            return {
+              entity_id: variables.entity,
+              duration: duration
+            };
+          }
+          return {
+            entity_id: variables.entity
+          };
+        ]]]
+    double_tap_action:
+      action: call-service
+      service: timer.cancel
+      service_data:
+        entity_id:
+          - '[[[ return variables.entity ]]]'
 
 views:
   - theme: Backend-selected
@@ -200,7 +302,7 @@ views:
     badges: []
     cards:
       - type: grid
-        columns: 3
+        columns: 4
         square: true
         cards:
           - type: custom:button-card
@@ -303,8 +405,8 @@ views:
               custom_fields:
                 status:
                   - position: absolute
-                  - right: 12px
-                  - top: 12px
+                  - right: 6px
+                  - top: 6px
             tap_action:
               action: call-service
               service: |
@@ -322,6 +424,60 @@ views:
             double_tap_action:
               action: navigate
               navigation_path: /lovelace-mobile/1
+
+          - type: custom:button-card
+            aspect_ratio: 1/1
+            triggers_update:
+              - sensor.sm_g892a_battery_level
+              - device_tracker.sm_g892a
+              - switch.living_room_phone_charger
+            template:
+              - cardg_bg_color
+            icon: mdi:cellphone-marker
+            name: |
+              [[[
+                return states['sensor.sm_g892a_battery_level'].state + '%';
+              ]]]
+            custom_fields:
+              status: |
+                [[[
+                  var icon = (states['switch.living_room_phone_charger'].state === 'off')? 'battery' : 'battery-charging';
+                  var batteryLevel = Math.ceil(states['sensor.sm_g892a_battery_level'].state / 10) * 10;
+                  if (batteryLevel < 100) {
+                    icon += '-' + String(batteryLevel);
+                  }
+                  return `<ha-icon
+                    icon="mdi:${icon}"
+                    style="width: 24px; height: 24px; color: rgb(68, 115, 158);">
+                    </ha-icon>`
+                ]]]              
+            styles:
+              icon:
+                - color: |
+                    [[[ 
+                      return (states['device_tracker.sm_g892a'].state !== 'home')? '#AAAAAA' : 'rgb(68, 115, 158)'; 
+                    ]]]
+              grid:
+                - position: relative
+              custom_fields:
+                status:
+                  - position: absolute
+                  - right: 6px
+                  - top: 6px
+            tap_action:
+              action: call-service
+              service: |
+                [[[
+                  if (states['device_tracker.sm_g892a'].state !== 'home') return 'none';
+                  return (states['switch.living_room_phone_charger'].state === 'off')? 'switch.turn_on' : 'switch.turn_off';
+                ]]]
+              service_data:
+                entity_id: switch.living_room_phone_charger
+            double_tap_action:
+              action: call-service
+              service: switch.turn_off
+              service_data:
+                entity_id: switch.living_room_phone_charger
 
       - type: horizontal-stack
         cards:
@@ -627,3 +783,335 @@ views:
                   class: |
                     >
                       return (entity.state === 'on')? 'vacuum-area-enabled' : 'vacuum-area-disabled';
+  - theme: Backend-selected
+    icon: mdi:heating-coil
+    badges: []
+    cards:
+      - type: grid
+        columns: 2
+        cards:
+          - type: custom:button-card
+            entity: input_boolean.bathroom_heater
+            name: Ванна
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+              - icon_color
+              - icon_radiator
+            tap_action: 
+              action: toggle
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                entity: timer.bathroom_heater
+                triggers_update:
+                  - input_number.bathroom_heater_timer_min
+                  - input_number.bathroom_heater_timer_hour
+                  - input_boolean.bathroom_heater
+                template:
+                  - cardg_bg_color
+                  - icon_color
+                  - stop_timer_tpl
+                variables:
+                  min: input_number.bathroom_heater_timer_min
+                  hour: input_number.bathroom_heater_timer_hour
+                  switch: input_boolean.bathroom_heater
+                  entity: timer.bathroom_heater
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_decrement_tpl
+                    variables:
+                      entity: input_number.bathroom_heater_timer_min
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    entity: input_number.bathroom_heater_timer_min
+                    template:
+                      - cardg_bg_color
+                      - time_view_tpl
+                    variables:
+                      unit: хв
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_increment_tpl
+                    variables:
+                      entity: input_number.bathroom_heater_timer_min
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_decrement_tpl
+                    variables:
+                      entity: input_number.bathroom_heater_timer_hour
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    entity: input_number.bathroom_heater_timer_hour
+                    template:
+                      - cardg_bg_color
+                      - time_view_tpl
+                    variables:
+                      unit: год
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_increment_tpl
+                    variables:
+                      entity: input_number.bathroom_heater_timer_hour
+      - type: grid
+        columns: 2
+        cards:
+          - type: custom:button-card
+            entity: input_boolean.balcony_left_heater
+            name: Балкон зліва
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+              - icon_color
+              - icon_radiator
+            tap_action: 
+              action: toggle
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                entity: timer.balcony_left_heater
+                triggers_update:
+                  - input_number.balcony_left_heater_timer_min
+                  - input_number.balcony_left_heater_timer_hour
+                  - input_boolean.balcony_left_heater
+                template:
+                  - cardg_bg_color
+                  - icon_color
+                  - stop_timer_tpl
+                variables:
+                  min: input_number.balcony_left_heater_timer_min
+                  hour: input_number.balcony_left_heater_timer_hour
+                  switch: input_boolean.balcony_left_heater
+                  entity: timer.balcony_left_heater
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_decrement_tpl
+                    variables:
+                      entity: input_number.balcony_left_heater_timer_min
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    entity: input_number.balcony_left_heater_timer_min
+                    template:
+                      - cardg_bg_color
+                      - time_view_tpl
+                    variables:
+                      unit: хв
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_increment_tpl
+                    variables:
+                      entity: input_number.balcony_left_heater_timer_min
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_decrement_tpl
+                    variables:
+                      entity: input_number.balcony_left_heater_timer_hour
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    entity: input_number.balcony_left_heater_timer_hour
+                    template:
+                      - cardg_bg_color
+                      - time_view_tpl
+                    variables:
+                      unit: год
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_increment_tpl
+                    variables:
+                      entity: input_number.balcony_left_heater_timer_hour
+      - type: grid
+        columns: 2
+        cards:
+          - type: custom:button-card
+            name: Балкон справа
+            entity: input_boolean.balcony_right_heater_long
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+              - icon_color
+              - icon_radiator
+            tap_action: 
+              action: toggle
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                entity: timer.balcony_right_heater_long
+                triggers_update:
+                  - input_number.balcony_right_heater_long_timer_min
+                  - input_number.balcony_right_heater_long_timer_hour
+                  - input_boolean.balcony_right_heater_long
+                template:
+                  - cardg_bg_color
+                  - icon_color
+                  - stop_timer_tpl
+                variables:
+                  min: input_number.balcony_right_heater_long_timer_min
+                  hour: input_number.balcony_right_heater_long_timer_hour
+                  switch: input_boolean.balcony_right_heater_long
+                  entity: timer.balcony_right_heater_long
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_decrement_tpl
+                    variables:
+                      entity: input_number.balcony_right_heater_long_timer_min
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    entity: input_number.balcony_right_heater_long_timer_min
+                    template:
+                      - cardg_bg_color
+                      - time_view_tpl
+                    variables:
+                      unit: хв
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_increment_tpl
+                    variables:
+                      entity: input_number.balcony_right_heater_long_timer_min
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_decrement_tpl
+                    variables:
+                      entity: input_number.balcony_right_heater_long_timer_hour
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    entity: input_number.balcony_right_heater_long_timer_hour
+                    template:
+                      - cardg_bg_color
+                      - time_view_tpl
+                    variables:
+                      unit: год
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_increment_tpl
+                    variables:
+                      entity: input_number.balcony_right_heater_long_timer_hour
+      - type: grid
+        columns: 2
+        cards:
+          - type: custom:button-card
+            name: Балкон по-центру
+            entity: input_boolean.balcony_right_heater_tall
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+              - icon_color
+              - icon_radiator
+            tap_action: 
+              action: toggle
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                entity: timer.balcony_right_heater_tall
+                triggers_update:
+                  - input_number.balcony_right_heater_tall_timer_min
+                  - input_number.balcony_right_heater_tall_timer_hour
+                  - input_boolean.balcony_right_heater_tall
+                template:
+                  - cardg_bg_color
+                  - icon_color
+                  - stop_timer_tpl
+                variables:
+                  min: input_number.balcony_right_heater_tall_timer_min
+                  hour: input_number.balcony_right_heater_tall_timer_hour
+                  switch: input_boolean.balcony_right_heater_tall
+                  entity: timer.balcony_right_heater_tall
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_decrement_tpl
+                    variables:
+                      entity: input_number.balcony_right_heater_tall_timer_min
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    entity: input_number.balcony_right_heater_tall_timer_min
+                    template:
+                      - cardg_bg_color
+                      - time_view_tpl
+                    variables:
+                      unit: хв
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_increment_tpl
+                    variables:
+                      entity: input_number.balcony_right_heater_tall_timer_min
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_decrement_tpl
+                    variables:
+                      entity: input_number.balcony_right_heater_tall_timer_hour
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    entity: input_number.balcony_right_heater_tall_timer_hour
+                    template:
+                      - cardg_bg_color
+                      - time_view_tpl
+                    variables:
+                      unit: год
+                  - type: custom:button-card
+                    aspect_ratio: 1/1
+                    template:
+                      - cardg_bg_color
+                      - icon_color
+                      - time_increment_tpl
+                    variables:
+                      entity: input_number.balcony_right_heater_tall_timer_hour
