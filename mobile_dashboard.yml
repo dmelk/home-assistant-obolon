@@ -873,7 +873,7 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            entity: input_boolean.balcony_left_heater
+            entity: input_boolean.balcony_left_heater_bool
             name: Балкон зліва
             aspect_ratio: 1/1
             template:
@@ -889,7 +889,7 @@ views:
                 triggers_update:
                   - input_number.balcony_left_heater_timer_min
                   - input_number.balcony_left_heater_timer_hour
-                  - input_boolean.balcony_left_heater
+                  - input_boolean.balcony_left_heater_bool
                 template:
                   - cardg_bg_color
                   - icon_color
@@ -897,7 +897,7 @@ views:
                 variables:
                   min: input_number.balcony_left_heater_timer_min
                   hour: input_number.balcony_left_heater_timer_hour
-                  switch: input_boolean.balcony_left_heater
+                  switch: input_boolean.balcony_left_heater_bool
                   entity: timer.balcony_left_heater
               - type: horizontal-stack
                 cards:
@@ -956,7 +956,7 @@ views:
         cards:
           - type: custom:button-card
             name: Балкон справа
-            entity: input_boolean.balcony_right_heater_long
+            entity: input_boolean.balcony_right_heater_long_bool
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
@@ -971,7 +971,7 @@ views:
                 triggers_update:
                   - input_number.balcony_right_heater_long_timer_min
                   - input_number.balcony_right_heater_long_timer_hour
-                  - input_boolean.balcony_right_heater_long
+                  - input_boolean.balcony_right_heater_long_bool
                 template:
                   - cardg_bg_color
                   - icon_color
@@ -979,7 +979,7 @@ views:
                 variables:
                   min: input_number.balcony_right_heater_long_timer_min
                   hour: input_number.balcony_right_heater_long_timer_hour
-                  switch: input_boolean.balcony_right_heater_long
+                  switch: input_boolean.balcony_right_heater_long_bool
                   entity: timer.balcony_right_heater_long
               - type: horizontal-stack
                 cards:
@@ -1038,7 +1038,7 @@ views:
         cards:
           - type: custom:button-card
             name: Балкон по-центру
-            entity: input_boolean.balcony_right_heater_tall
+            entity: input_boolean.balcony_right_heater_tall_bool
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
@@ -1053,7 +1053,7 @@ views:
                 triggers_update:
                   - input_number.balcony_right_heater_tall_timer_min
                   - input_number.balcony_right_heater_tall_timer_hour
-                  - input_boolean.balcony_right_heater_tall
+                  - input_boolean.balcony_right_heater_tall_bool
                 template:
                   - cardg_bg_color
                   - icon_color
@@ -1061,7 +1061,7 @@ views:
                 variables:
                   min: input_number.balcony_right_heater_tall_timer_min
                   hour: input_number.balcony_right_heater_tall_timer_hour
-                  switch: input_boolean.balcony_right_heater_tall
+                  switch: input_boolean.balcony_right_heater_tall_bool
                   entity: timer.balcony_right_heater_tall
               - type: horizontal-stack
                 cards:
