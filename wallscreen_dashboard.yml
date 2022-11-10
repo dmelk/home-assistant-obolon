@@ -230,6 +230,12 @@ views:
 
                           return `${entities[tempEntity].state}° ${entities[humEntity].state}%`;
                         },
+                        anyBinarySensors: (prefix, sensors) => {
+                          for (var i = 0; i < sensors.length; i++) {
+                            if (entities[prefix + sensors[i]].state === 'on') return true;
+                          }
+                          return false;
+                        },
                       };
                   rules:
                     - name: Fans
@@ -563,9 +569,6 @@ views:
                     - name: Robot vacuum
                       element: button.robot_vacuum
                       tap_action:
-                        action: navigate
-                        navigation_path: /lovelace-wallscreen/1
-                      double_tap_action:
                         action: call-service
                         service: vacuum.start
                         service_data:
@@ -630,6 +633,193 @@ views:
                             text: |
                               >
                                 return `${parseInt(entity.state)}°`;
+                    - name: Alerts
+                      entities:
+                        - entity: binary_sensor.m_kiyiv_air
+                        - entity: binary_sensor.m_kiyiv_artillery
+                        - entity: binary_sensor.m_kiyiv_chemical
+                        - entity: binary_sensor.m_kiyiv_nuclear
+                        - entity: binary_sensor.m_kiyiv_unknown
+                        - entity: binary_sensor.m_kiyiv_urban_fights
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: group.alerts
+                            class: |
+                              >
+                                return (functions.anyBinarySensors('binary_sensor.m_kiyiv_', ['air', 'artillery', 'chemical', 'nuclear', 'unknown', 'urban_fights']))? '' : 'hidden';
+                    - name: Air alert
+                      entity: binary_sensor.m_kiyiv_air
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: alert.air
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+                    - name: Artillery alert
+                      entity: binary_sensor.m_kiyiv_artillery
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: alert.artilerry
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+                    - name: Chemical alert
+                      entity: binary_sensor.m_kiyiv_chemical
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: alert.chemical
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+                    - name: Nuclear alert
+                      entity: binary_sensor.m_kiyiv_nuclear
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: alert.nuke
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+                    - name: Unknown alert
+                      entity: binary_sensor.m_kiyiv_unknown
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: alert.unknown
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+                    - name: City alert
+                      entity: binary_sensor.m_kiyiv_urban_fights
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: alert.city
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+                    - name: Main battery
+                      entity: sensor.voltage
+                      state_action:
+                        - action: call-service
+                          service: floorplan.text_set
+                          service_data:
+                            element: value.battery_volts
+                            text: |
+                              >
+                                return entities['sensor.voltage'].state + ' V';
+                    - name: Motophone battery level
+                      entity: sensor.sm_g892a_battery_level
+                      state_action:
+                        - action: call-service
+                          service: floorplan.text_set
+                          service_data:
+                            element: value.motophone_charge
+                            text: |
+                              >
+                                return entities['sensor.sm_g892a_battery_level'].state + '%';
+                    - name: Motophone battery charge
+                      entity: switch.living_room_phone_charger
+                      element: button.motophone
+                      tap_action:
+                        - action: call-service
+                          service: switch.toggle
+                          service_data:
+                            entity_id: switch.living_room_phone_charger
+                      double_tap_action:
+                        - action: call-service
+                          service: switch.turn_off
+                          service_data:
+                            entity_id: switch.living_room_phone_charger
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.motophone_charging
+                            class: |
+                              >
+                                return (entity.state === 'on')? '' : 'hidden';
+                    - name: Motophone location
+                      entity: device_tracker.sm_g892a
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: button.motophone
+                            class: |
+                              >
+                                return (entity.state === 'home')? '' : 'hidden';
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: label.motophone_charge
+                            class: |
+                              >
+                                return (entity.state === 'home')? '' : 'hidden';
+                    - name: Heater bathroom
+                      entity: input_boolean.bathroom_heater
+                      element: button.heater_bathroom
+                      tap_action:
+                        - action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.heater_bathroom
+                            class: |
+                              >
+                                return (entity.state === 'on')? 'btn-heater-on' : '';
+                    - name: Heater balcony left
+                      entity: input_boolean.balcony_left_heater_bool
+                      element: button.heater_left
+                      tap_action:
+                        - action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.heater_left
+                            class: |
+                              >
+                                return (entity.state === 'on')? 'btn-heater-on' : '';
+                    - name: Heater balcony right
+                      entity: input_boolean.balcony_right_heater_long_bool
+                      element: button.heater_right
+                      tap_action:
+                        - action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.heater_right
+                            class: |
+                              >
+                                return (entity.state === 'on')? 'btn-heater-on' : '';
+                    - name: Heater balcony right tall
+                      entity: input_boolean.balcony_right_heater_tall_bool
+                      element: button.heater_right_tall
+                      tap_action:
+                        - action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.heater_right_tall
+                            class: |
+                              >
+                                return (entity.state === 'on')? 'btn-heater-on' : '';
+
   - theme: Backend-selected
     icon: mdi:robot-vacuum
     badges: []

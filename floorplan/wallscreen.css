@@ -11,6 +11,10 @@
   fill: #008800 !important;
 }
 
+.btn-heater-on {
+  fill: #880000 !important;
+}
+
 /* Light Control */
 
 .light-on{
