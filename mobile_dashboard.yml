@@ -483,6 +483,7 @@ views:
         cards:
           - type: custom:button-card
             entity: light.hallway_light
+            aspect_ratio: 1/1
             template:
               - light_button_tpl
               - cardg_bg_color
@@ -492,6 +493,7 @@ views:
               name: Коридор
           - type: custom:button-card
             entity: light.kitchen_light
+            aspect_ratio: 1/1
             template:
               - light_button_tpl
               - cardg_bg_color
@@ -499,6 +501,75 @@ views:
               name: Кухня
               switch: light.kitchen_light
               light: light.kitchen
+          - type: custom:button-card
+            entity: sensor.cpu_temp
+            triggers_update:
+              - sensor.disk_use_percent
+              - sensor.memory_use_percent
+              - sensor.processor_use
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+              - icon_color
+            name: ' '
+            icon: ''
+            styles:
+              grid:
+                - grid-template-areas: '"temp temp" "cpu cpu" "ram ram"'
+                - grid-template-columns: 1fr 1fr
+                - grid-template-rows: min-content min-content min-content
+              custom_fields:
+                temp:
+                  - align-self: middle
+                  - justify-self: middle
+                  - --text-color-sensor: |
+                      [[[
+                        if (entity.state < 60) return 'green';
+                        if (entity.state >= 60 && entity.state < 80) return 'orange';
+                        else return 'red';
+                      ]]]
+                cpu:
+                  - padding-bottom: 2px
+                  - align-self: middle
+                  - justify-self: middle
+                  - --text-color-sensor: '[[[ if (states["sensor.processor_use"].state > 80) return "red"; ]]]'
+                ram:
+                  - align-self: middle
+                  - justify-self: middle
+                  - --text-color-sensor: '[[[ if (states["sensor.memory_use_percent"].state > 80) return "red"; ]]]'
+            custom_fields:
+              temp: >
+                [[[
+                  return `<ha-icon
+                    icon="mdi:raspberry-pi"
+                    style="width: 12px; height: 12px; color: var(--text-color-sensor);">
+                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px">${entity.state}°C</span>`
+                ]]]
+              cpu: >
+                [[[
+                  return `<ha-icon
+                    icon="mdi:cpu-64-bit"
+                    style="width: 12px; height: 12px; color: deepskyblue;">
+                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px"">${states['sensor.processor_use'].state}%</span>`
+                ]]]
+              ram: >
+                [[[
+                  return `<ha-icon
+                    icon="mdi:server"
+                    style="width: 12px; height: 12px; color: deepskyblue;">
+                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px"">${states['sensor.memory_use_percent'].state}%</span>`
+                ]]]
+          - type: custom:button-card
+            entity: sensor.voltage
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+              - icon_color
+            icon: 'mdi:home-battery-outline'
+            name: |
+              [[[
+                return states['sensor.voltage'].state + ' V';
+              ]]]
 
       - type: horizontal-stack
         cards:
@@ -874,7 +945,7 @@ views:
         cards:
           - type: custom:button-card
             entity: input_boolean.balcony_left_heater_bool
-            name: Балкон зліва
+            name: Балкон вітальня
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
@@ -955,7 +1026,7 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            name: Балкон справа
+            name: Балкон спальня
             entity: input_boolean.balcony_right_heater_long_bool
             aspect_ratio: 1/1
             template:
@@ -1037,7 +1108,7 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            name: Балкон по-центру
+            name: Балкон спальня високий
             entity: input_boolean.balcony_right_heater_tall_bool
             aspect_ratio: 1/1
             template:

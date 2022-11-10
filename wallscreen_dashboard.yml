@@ -811,7 +811,7 @@ views:
         cards:
           - type: custom:button-card
             entity: input_boolean.balcony_left_heater_bool
-            name: Балкон зліва
+            name: Балкон вітальня
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
@@ -892,7 +892,7 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            name: Балкон справа
+            name: Балкон спальня
             entity: input_boolean.balcony_right_heater_long_bool
             aspect_ratio: 1/1
             template:
@@ -974,7 +974,7 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            name: Балкон по-центру
+            name: Балкон спальня високий
             entity: input_boolean.balcony_right_heater_tall_bool
             aspect_ratio: 1/1
             template:
