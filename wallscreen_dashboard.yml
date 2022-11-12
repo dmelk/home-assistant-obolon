@@ -921,6 +921,8 @@ views:
           - type: custom:button-card
             entity: input_boolean.bathroom_heater
             name: Ванна
+            label: '[[[ return states["sensor.bathroom_heater_electricalmeasurement_3"].state + " W" ]]]'
+            show_label: true
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
@@ -1003,6 +1005,8 @@ views:
           - type: custom:button-card
             entity: input_boolean.balcony_left_heater_bool
             name: Балкон вітальня
+            label: '[[[ return states["sensor.balcony_left_heater_electricalmeasurement_3"].state + " W" ]]]'
+            show_label: true
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
@@ -1085,6 +1089,8 @@ views:
           - type: custom:button-card
             name: Балкон спальня
             entity: input_boolean.balcony_right_heater_long_bool
+            label: '[[[ return states["sensor.tz3000_cehuw1lw_ts011f_electricalmeasurement"].state + " W" ]]]'
+            show_label: true
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
@@ -1166,6 +1172,8 @@ views:
         cards:
           - type: custom:button-card
             name: Балкон спальня високий
+            label: '[[[ return states["sensor.tz3000_cehuw1lw_ts011f_electricalmeasurement_2"].state + " W" ]]]'
+            show_label: true
             entity: input_boolean.balcony_right_heater_tall_bool
             aspect_ratio: 1/1
             template:
