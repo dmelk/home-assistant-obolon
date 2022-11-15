@@ -260,7 +260,7 @@ views:
                           service: browser_mod.popup
                           service_data:
                             title: Ванна
-                            card:
+                            content:
                               type: vertical-stack
                               cards:
                                 - type: entities
@@ -314,7 +314,7 @@ views:
                           service: browser_mod.popup
                           service_data:
                             title: Туалет
-                            card:
+                            content:
                               type: vertical-stack
                               cards:
                                 - type: entities
@@ -358,7 +358,7 @@ views:
                           service: browser_mod.popup
                           service_data:
                             title: Коридор
-                            card:
+                            content:
                               type: vertical-stack
                               cards:
                                 - type: entities
@@ -399,7 +399,7 @@ views:
                           service: browser_mod.popup
                           service_data:
                             title: Коридор
-                            card:
+                            content:
                               type: vertical-stack
                               cards:
                                 - type: entities
@@ -440,7 +440,7 @@ views:
                           service: browser_mod.popup
                           service_data:
                             title: Коридор
-                            card:
+                            content:
                               type: vertical-stack
                               cards:
                                 - type: entities
@@ -482,7 +482,7 @@ views:
                           service: browser_mod.popup
                           service_data:
                             title: Вітальня
-                            card:
+                            content:
                               type: vertical-stack
                               cards:
                                 - type: entities
