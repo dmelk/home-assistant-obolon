@@ -709,6 +709,19 @@ views:
                             class: |
                               >
                                 return (entity.state === 'on')? '' : 'hidden';
+                    - name: Main battery button
+                      element: button.battery_charge
+                      entity: switch.big_battery_charger
+                      tap_action:
+                        - action: toggle
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.battery_charge
+                            class: |
+                              >
+                                return (entity.state === 'on')? 'btn-heater-on' : '';
                     - name: Main battery
                       entity: sensor.voltage
                       state_action:
@@ -718,7 +731,18 @@ views:
                             element: value.battery_volts
                             text: |
                               >
-                                return entities['sensor.voltage'].state + ' V';
+                                if (states['switch.big_battery_charger'].state === 'on') {
+                                  var leftSeconds = Math.floor(((new Date(states['timer.big_battery'].attributes.finishes_at)).getTime() - (new Date()).getTime()) / 1000),
+                                    leftHours = Math.floor(leftSeconds / 3600),
+                                    leftMinutes = Math.ceil(leftSeconds / 60) - Math.floor(leftSeconds / 3600) * 60;
+                                  if (leftMinutes == 60) {
+                                    leftMinutes = 0;
+                                    leftHours ++;
+                                  }
+                                  
+                                  return String(leftHours).padStart(2, '0') + ':' + String(leftMinutes).padStart(2, '0');
+                                }
+                                return states['sensor.voltage'].state + ' V';
                     - name: Motophone battery level
                       entity: sensor.motophone_battery_level
                       state_action:
