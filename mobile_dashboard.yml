@@ -429,7 +429,7 @@ views:
           - type: custom:button-card
             aspect_ratio: 1/1
             triggers_update:
-              - sensor.sm_g892a_battery_level
+              - sensor.motophone_battery_level
               - device_tracker.sm_g892a
               - switch.living_room_phone_charger
             template:
@@ -437,13 +437,13 @@ views:
             icon: mdi:cellphone-marker
             name: |
               [[[
-                return states['sensor.sm_g892a_battery_level'].state + '%';
+                return states['sensor.motophone_battery_level'].state + '%';
               ]]]
             custom_fields:
               status: |
                 [[[
                   var icon = (states['switch.living_room_phone_charger'].state === 'off')? 'battery' : 'battery-charging';
-                  var batteryLevel = Math.ceil(states['sensor.sm_g892a_battery_level'].state / 10) * 10;
+                  var batteryLevel = Math.ceil(states['sensor.motophone_battery_level'].state / 10) * 10;
                   if (batteryLevel < 100) {
                     icon += '-' + String(batteryLevel);
                   }

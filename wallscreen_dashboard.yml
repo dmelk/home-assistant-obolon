@@ -720,7 +720,7 @@ views:
                               >
                                 return entities['sensor.voltage'].state + ' V';
                     - name: Motophone battery level
-                      entity: sensor.sm_g892a_battery_level
+                      entity: sensor.motophone_battery_level
                       state_action:
                         - action: call-service
                           service: floorplan.text_set
@@ -728,7 +728,7 @@ views:
                             element: value.motophone_charge
                             text: |
                               >
-                                return entities['sensor.sm_g892a_battery_level'].state + '%';
+                                return entities['sensor.motophone_battery_level'].state + '%';
                     - name: Motophone battery charge
                       entity: switch.living_room_phone_charger
                       element: button.motophone
