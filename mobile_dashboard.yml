@@ -564,21 +564,16 @@ views:
                     </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px"">${states['sensor.memory_use_percent'].state}%</span>`
                 ]]]
           - type: custom:button-card
-            entity: switch.big_battery_charger
+            entity: sensor.voltage
             aspect_ratio: 1/1
             template:
               - cardg_bg_color
               - icon_color
             icon: 'mdi:home-battery-outline'
-            tap_action: 
-              action: toggle
-            triggers_update:
-              - sensor.voltage
-              - timer.big_battery
             custom_fields:
               status: |
                 [[[
-                  if (states['switch.big_battery_charger'].state === 'on') {
+                  if (parseFloat(states['sensor.voltage'].state) > 13.2) {
                     return `<ha-icon
                       icon="mdi:battery-charging"
                       style="width: 24px; height: 24px; color: rgb(68, 115, 158);">
@@ -588,17 +583,6 @@ views:
                 ]]]              
             name: |
               [[[
-                if (states['switch.big_battery_charger'].state === 'on') {
-                  var leftSeconds = Math.floor(((new Date(states['timer.big_battery'].attributes.finishes_at)).getTime() - (new Date()).getTime()) / 1000),
-                    leftHours = Math.floor(leftSeconds / 3600),
-                    leftMinutes = Math.ceil(leftSeconds / 60) - Math.floor(leftSeconds / 3600) * 60;
-                  if (leftMinutes == 60) {
-                    leftMinutes = 0;
-                    leftHours ++;
-                  }
-                  
-                  return String(leftHours).padStart(2, '0') + ':' + String(leftMinutes).padStart(2, '0');
-                }
                 return states['sensor.voltage'].state + ' V';
               ]]]
             styles:
