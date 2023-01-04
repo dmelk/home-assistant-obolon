@@ -709,6 +709,17 @@ views:
                             class: |
                               >
                                 return (entity.state === 'on')? '' : 'hidden';
+                    - name: Main battery button
+                      element: button.battery_charge
+                      entity: input_boolean.grid_power
+                      state_action:
+                        - action: call-service
+                          service: floorplan.class_set
+                          service_data:
+                            element: icon.battery_charge
+                            class: |
+                              >
+                                return (entity.state === 'on')? 'btn-heater-on' : '';
                     - name: Main battery
                       entity: sensor.voltage
                       state_action:

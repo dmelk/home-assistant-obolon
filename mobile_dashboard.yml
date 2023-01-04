@@ -570,10 +570,12 @@ views:
               - cardg_bg_color
               - icon_color
             icon: 'mdi:home-battery-outline'
+            triggers_update:
+              - input_boolean.grid_power
             custom_fields:
               status: |
                 [[[
-                  if (parseFloat(states['sensor.voltage'].state) > 13.2) {
+                  if (states['input_boolean.grid_power'].state == 'on') {
                     return `<ha-icon
                       icon="mdi:battery-charging"
                       style="width: 24px; height: 24px; color: rgb(68, 115, 158);">
