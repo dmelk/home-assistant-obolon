@@ -428,7 +428,136 @@ views:
             double_tap_action:
               action: navigate
               navigation_path: /lovelace-mobile/1
+          - type: custom:button-card
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+            entity: binary_sensor.intercom_domofon_incoming_call
+            triggers_update:
+              - switch.intercom_domofon_automatically_open
+              - switch.intercom_domofon_automatically_open_once
+              - switch.intercom_domofon_automatically_reject
+            show_name: false
+            show_state: false
+            icon: |
+              [[[
+                var icon = (entity.state === 'off')? 'phone' : 'phone-in-talk';
+                if (states["switch.intercom_domofon_automatically_open_once"].state !== 'off') icon = 'phone-forward';
+                if (states["switch.intercom_domofon_automatically_open"].state !== 'off') icon = 'phone-check';
+                if (states["switch.intercom_domofon_automatically_reject"].state !== 'off') icon = 'phone-cancel';
+                return `mdi:${icon}`;
+              ]]]
+            tap_action:
+              action: call-service
+              service: |
+                [[[
+                  if (entity.state !== 'off') return 'esphome.intercom_accept_call';
+                  if (states["switch.intercom_domofon_automatically_reject"].state !== 'off') return 'switch.turn_off';
+                  return 'switch.turn_on';
+                ]]]
+              service_data: | 
+                [[[
+                  if (entity.state !== 'off') return {};
+                  var entity_id = 'switch.intercom_domofon_automatically_open_once';
+                  if (states["switch.intercom_domofon_automatically_open_once"].state !== 'off') entity_id = 'switch.intercom_domofon_automatically_open';
+                  if (states["switch.intercom_domofon_automatically_open"].state !== 'off') entity_id = 'switch.intercom_domofon_automatically_reject';
+                  if (states["switch.intercom_domofon_automatically_reject"].state !== 'off') entity_id = 'switch.intercom_domofon_automatically_reject';
+                  return {entity_id: entity_id}
+                ]]]
+                
+            double_tap_action:
+              action: call-service
+              service: esphome.intercom_reject_call
 
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            entity: light.hallway_light
+            aspect_ratio: 1/1
+            template:
+              - light_button_tpl
+              - cardg_bg_color
+            variables:
+              switch: light.hallway_light
+              light: light.hallway
+              name: Коридор
+          - type: custom:button-card
+            entity: light.kitchen_light
+            aspect_ratio: 1/1
+            template:
+              - light_button_tpl
+              - cardg_bg_color
+            variables:
+              name: Кухня
+              switch: light.kitchen_light
+              light: light.kitchen
+          - type: custom:button-card
+            entity: input_boolean.grid_power
+            triggers_update:
+              - sensor.disk_use_percent
+              - sensor.memory_use_percent
+              - sensor.processor_use
+              - sensor.cpu_temp
+              - sensor.voltage
+            tap_action:
+              action: more-info
+            aspect_ratio: 1/1
+            template:
+              - cardg_bg_color
+              - icon_color
+            name: >
+              [[[
+                return states['sensor.voltage'].state + ' V';
+              ]]]
+            icon: ''
+            styles:
+              grid:
+                - grid-template-areas: '"temp" "cpu " "ram" "n"'
+                - grid-template-columns: 1fr
+                - grid-template-rows: min-content min-content min-content 1fr 
+              name:
+                  - color: '[[[ if (states["input_boolean.grid_power"].state == "on") return "green"; ]]]'
+              custom_fields:
+                temp:
+                  - align-self: middle
+                  - justify-self: middle
+                  - --text-color-sensor: |
+                      [[[
+                        if (states['sensor.cpu_temp'].state < 60) return 'green';
+                        if (states['sensor.cpu_temp'].state >= 60 && states['sensor.cpu_temp'].state < 80) return 'orange';
+                        else return 'red';
+                      ]]]
+                cpu:
+                  - padding-bottom: 2px
+                  - align-self: middle
+                  - justify-self: middle
+                  - --text-color-sensor: '[[[ if (states["sensor.processor_use"].state > 80) return "red"; ]]]'
+                ram:
+                  - align-self: middle
+                  - justify-self: middle
+                  - --text-color-sensor: '[[[ if (states["sensor.memory_use_percent"].state > 80) return "red"; ]]]'
+            custom_fields:
+              temp: >
+                [[[
+                  return `<ha-icon
+                    icon="mdi:raspberry-pi"
+                    style="width: 12px; height: 12px; color: var(--text-color-sensor);">
+                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px">${states['sensor.cpu_temp'].state}°C</span>`
+                ]]]
+              cpu: >
+                [[[
+                  return `<ha-icon
+                    icon="mdi:cpu-64-bit"
+                    style="width: 12px; height: 12px; color: deepskyblue;">
+                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px"">${states['sensor.processor_use'].state}%</span>`
+                ]]]
+              ram: >
+                [[[
+                  return `<ha-icon
+                    icon="mdi:server"
+                    style="width: 12px; height: 12px; color: deepskyblue;">
+                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px"">${states['sensor.memory_use_percent'].state}%</span>`
+                ]]]
           - type: custom:button-card
             aspect_ratio: 1/1
             triggers_update:
@@ -482,119 +611,6 @@ views:
               service: switch.turn_off
               service_data:
                 entity_id: switch.living_room_phone_charger
-
-      - type: horizontal-stack
-        cards:
-          - type: custom:button-card
-            entity: light.hallway_light
-            aspect_ratio: 1/1
-            template:
-              - light_button_tpl
-              - cardg_bg_color
-            variables:
-              switch: light.hallway_light
-              light: light.hallway
-              name: Коридор
-          - type: custom:button-card
-            entity: light.kitchen_light
-            aspect_ratio: 1/1
-            template:
-              - light_button_tpl
-              - cardg_bg_color
-            variables:
-              name: Кухня
-              switch: light.kitchen_light
-              light: light.kitchen
-          - type: custom:button-card
-            entity: sensor.cpu_temp
-            triggers_update:
-              - sensor.disk_use_percent
-              - sensor.memory_use_percent
-              - sensor.processor_use
-            aspect_ratio: 1/1
-            template:
-              - cardg_bg_color
-              - icon_color
-            name: ' '
-            icon: ''
-            styles:
-              grid:
-                - grid-template-areas: '"temp temp" "cpu cpu" "ram ram"'
-                - grid-template-columns: 1fr 1fr
-                - grid-template-rows: min-content min-content min-content
-              custom_fields:
-                temp:
-                  - align-self: middle
-                  - justify-self: middle
-                  - --text-color-sensor: |
-                      [[[
-                        if (entity.state < 60) return 'green';
-                        if (entity.state >= 60 && entity.state < 80) return 'orange';
-                        else return 'red';
-                      ]]]
-                cpu:
-                  - padding-bottom: 2px
-                  - align-self: middle
-                  - justify-self: middle
-                  - --text-color-sensor: '[[[ if (states["sensor.processor_use"].state > 80) return "red"; ]]]'
-                ram:
-                  - align-self: middle
-                  - justify-self: middle
-                  - --text-color-sensor: '[[[ if (states["sensor.memory_use_percent"].state > 80) return "red"; ]]]'
-            custom_fields:
-              temp: >
-                [[[
-                  return `<ha-icon
-                    icon="mdi:raspberry-pi"
-                    style="width: 12px; height: 12px; color: var(--text-color-sensor);">
-                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px">${entity.state}°C</span>`
-                ]]]
-              cpu: >
-                [[[
-                  return `<ha-icon
-                    icon="mdi:cpu-64-bit"
-                    style="width: 12px; height: 12px; color: deepskyblue;">
-                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px"">${states['sensor.processor_use'].state}%</span>`
-                ]]]
-              ram: >
-                [[[
-                  return `<ha-icon
-                    icon="mdi:server"
-                    style="width: 12px; height: 12px; color: deepskyblue;">
-                    </ha-icon>&nbsp;<span style="color: var(--text-color-sensor); font-size: 14px"">${states['sensor.memory_use_percent'].state}%</span>`
-                ]]]
-          - type: custom:button-card
-            entity: sensor.voltage
-            aspect_ratio: 1/1
-            template:
-              - cardg_bg_color
-              - icon_color
-            icon: 'mdi:home-battery-outline'
-            triggers_update:
-              - input_boolean.grid_power
-            custom_fields:
-              status: |
-                [[[
-                  if (states['input_boolean.grid_power'].state == 'on') {
-                    return `<ha-icon
-                      icon="mdi:battery-charging"
-                      style="width: 24px; height: 24px; color: rgb(68, 115, 158);">
-                      </ha-icon>`;
-                  }
-                  return '';
-                ]]]              
-            name: |
-              [[[
-                return states['sensor.voltage'].state + ' V';
-              ]]]
-            styles:
-              grid:
-                - position: relative
-              custom_fields:
-                status:
-                  - position: absolute
-                  - right: 6px
-                  - top: 6px
 
       - type: horizontal-stack
         cards:
