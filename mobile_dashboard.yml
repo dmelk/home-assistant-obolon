@@ -505,10 +505,7 @@ views:
             template:
               - cardg_bg_color
               - icon_color
-            name: >
-              [[[
-                return states['sensor.voltage'].state + ' V';
-              ]]]
+            name: ' '
             icon: ''
             styles:
               grid:
