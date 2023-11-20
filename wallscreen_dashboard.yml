@@ -111,6 +111,7 @@ button_card_templates:
 
 wallpanel:
   enabled: true
+  black_screen_after_time: 15
   idle_time: 60
   image_url: ''
   info_update_interval: 30
@@ -142,7 +143,7 @@ wallpanel:
               styles:
                 card:
                   - background-color: '#333333'
-                  - font-size: '40px'
+                  - font-size: '35px'
               entity: sensor.air_outdoor_temp
               label: > 
                 [[[
@@ -249,12 +250,6 @@ wallpanel:
                   label += `</table>`;
                   return label;
                 ]]]
-  night_mode:
-    start_time: '22:00'
-    end_time: '06:00'
-    black_screen_after_time: 15
-    idle_time: 60
-    info_update_interval: 30
 kiosk_mode:
   user_settings:
     - users:
