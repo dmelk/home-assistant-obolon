@@ -111,7 +111,13 @@ button_card_templates:
 
 wallpanel:
   enabled: true
-  black_screen_after_time: 15
+  profile: night
+  profile_entity: input_text.wallpanel_profile
+  profiles:
+    day:
+      black_screen_after_time: 0
+    night:
+      black_screen_after_time: 15
   idle_time: 60
   image_url: ''
   info_update_interval: 30
