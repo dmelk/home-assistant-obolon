@@ -871,13 +871,23 @@ views:
         cards:
           - type: vertical-stack
             cards:
+              - type: custom:xiaomi-vacuum-map-card
+                map_source:
+                  camera: camera.roborock_q_revo_map
+                  crop:
+                    top: 210
+                    bottom: 210
+                calibration_source:
+                  camera: true
+                entity: vacuum.roborock_q_revo
+                vacuum_platform: default
+                two_finger_pan: false
+                map_locked: false
+          - type: vertical-stack
+            cards:
               - type: custom:more-info-card
                 entity: vacuum.roborock_q_revo
                 title: ' '
-              - type: picture-entity
-                entity: camera.roborock_q_revo_map
-          - type: vertical-stack
-            cards:
               - type: custom:button-card
                 icon: mdi:broom
                 layout: icon_name

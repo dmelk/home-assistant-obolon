@@ -814,8 +814,15 @@ views:
             icon: mdi:bed-double
             hold_action:
               action: none
-      - type: picture-entity
-        entity: camera.roborock_q_revo_map
+      - type: custom:xiaomi-vacuum-map-card
+        map_source:
+          camera: camera.roborock_q_revo_map
+        calibration_source:
+          camera: true
+        entity: vacuum.roborock_q_revo
+        vacuum_platform: default
+        map_locked: true
+        two_finger_pan: false
       - type: custom:more-info-card
         entity: vacuum.roborock_q_revo
         title: " " 
