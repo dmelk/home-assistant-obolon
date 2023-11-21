@@ -769,10 +769,10 @@ views:
             type: button
             tap_action:
               action: call-service
-              service: xiaomi_miio.vacuum_clean_segment
+              service: roborock.vacuum_clean_segment
               data:
                 segments:
-                  - 16
+                  - 19
               target:
                 entity_id: vacuum.roborock_q_revo
             entity: ''
@@ -785,7 +785,7 @@ views:
             type: button
             tap_action:
               action: call-service
-              service: xiaomi_miio.vacuum_clean_segment
+              service: roborock.vacuum_clean_segment
               data:
                 segments:
                   - 16
@@ -803,7 +803,7 @@ views:
             type: button
             tap_action:
               action: call-service
-              service: xiaomi_miio.vacuum_clean_segment
+              service: roborock.vacuum_clean_segment
               data:
                 segments:
                   - 17
@@ -845,15 +845,15 @@ views:
               if (states['input_boolean.vacuum_bedroom'].state === 'on') hasRoom = true;
               return (hasRoom)? 'call-service' : 'none';
             ]]]
-          service: xiaomi_miio.vacuum_clean_segment
+          service: roborock.vacuum_clean_segment
           service_data:
             entity_id: vacuum.roborock_q_revo
             segments: |
               [[[
                 var segments = [];
-                if (states['input_boolean.vacuum_hallway'].state === 'on') segments.push(16);
-                if (states['input_boolean.vacuum_living_room'].state === 'on') segments.push(18);
-                if (states['input_boolean.vacuum_kitchen'].state === 'on') segments.push(19);
+                if (states['input_boolean.vacuum_hallway'].state === 'on') segments.push(19);
+                if (states['input_boolean.vacuum_living_room'].state === 'on') segments.push(16);
+                if (states['input_boolean.vacuum_kitchen'].state === 'on') segments.push(18);
                 if (states['input_boolean.vacuum_bedroom'].state === 'on') segments.push(17);
                 return segments;
               ]]]

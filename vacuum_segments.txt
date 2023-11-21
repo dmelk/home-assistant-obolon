@@ -1,4 +1,4 @@
-hallway - 16
+hallway - 19
 bedroom - 17
-living_room - 18
-kitchen - 19
+living_room - 16
+kitchen - 18
