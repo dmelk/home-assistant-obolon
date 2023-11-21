@@ -258,6 +258,10 @@ views:
                   functions: |
                     >
                       return {
+                        simpleLightStyles: (switchEntity) => {
+                          if (entities[switchEntity].state === 'off') return 'fill: #000000; fill-opacity: 0.5';
+                          return `fill: #FFFFFF; fill-opacity: 0.5`;
+                        },
                         lightStyles: (switchEntity, lightEntity) => {
                           if (entities[switchEntity].state === 'off') return 'fill: #000000; fill-opacity: 0.5';
                           var rgbColor = entities[lightEntity].attributes.rgb_color;
@@ -411,14 +415,6 @@ views:
                                 - type: entities
                                   entities:
                                     - entity: light.hallway_light
-                                - type: conditional
-                                  conditions:
-                                    - entity: light.hallway_light
-                                      state: 'on'
-                                  card:
-                                    type: custom:more-info-card
-                                    entity: light.hallway
-                                    title: ' '
                       tap_action: toggle
                       state_action:
                         - action: call-service
@@ -427,17 +423,7 @@ views:
                             element: light.hallway
                             style: |
                               >
-                                return functions.lightStyles('light.hallway_light', 'light.hallway');
-                    - name: Hallway light bulb
-                      entity: light.hallway
-                      state_action:
-                        - action: call-service
-                          service: floorplan.style_set
-                          service_data:
-                            element: light.hallway
-                            style: |
-                              >
-                                return functions.lightStyles('light.hallway_light', 'light.hallway');
+                                return functions.simpleLightStyles('light.hallway_light');
                     - name: Kitchen light
                       entity: light.kitchen_light
                       element: light.kitchen
@@ -619,7 +605,7 @@ views:
                         action: call-service
                         service: vacuum.start
                         service_data:
-                          entity_id: vacuum.roborock_s6
+                          entity_id: vacuum.roborock_q_revo
                     - name: Living room climate btn
                       entity: input_boolean.climate_living_room
                       element: button.climate_living_room
@@ -885,23 +871,13 @@ views:
         cards:
           - type: vertical-stack
             cards:
-              - type: custom:xiaomi-vacuum-map-card
-                map_source:
-                  camera: camera.xiaomi_cloud_map_extractor
-                  crop:
-                    top: 210
-                    bottom: 210
-                calibration_source:
-                  camera: true
-                entity: vacuum.roborock_s6
-                vacuum_platform: default
-                two_finger_pan: false
-                map_locked: false
+              - type: custom:more-info-card
+                entity: vacuum.roborock_q_revo
+                title: ' '
+              - type: picture-entity
+                entity: camera.roborock_q_revo_map
           - type: vertical-stack
             cards:
-              - type: custom:more-info-card
-                entity: vacuum.roborock_s6
-                title: ' '
               - type: custom:button-card
                 icon: mdi:broom
                 layout: icon_name
@@ -930,7 +906,7 @@ views:
                     ]]]
                   service: xiaomi_miio.vacuum_clean_segment
                   service_data:
-                    entity_id: vacuum.roborock_s6
+                    entity_id: vacuum.roborock_q_revo
                     segments: |
                       [[[
                         var segments = [];

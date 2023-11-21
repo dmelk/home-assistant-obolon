@@ -384,7 +384,7 @@ views:
                 entity_id: light.fan_all
 
           - type: custom:button-card
-            entity: vacuum.roborock_s6
+            entity: vacuum.roborock_q_revo
             aspect_ratio: 1/1
             show_name: false
             template:
@@ -419,12 +419,12 @@ views:
                   return 'vacuum.pause';
                 ]]]
               service_data:
-                entity_id: vacuum.roborock_s6
+                entity_id: vacuum.roborock_q_revo
             hold_action:
               action: call-service
               service: vacuum.return_to_base
               service_data:
-                entity_id: vacuum.roborock_s6
+                entity_id: vacuum.roborock_q_revo
             double_tap_action:
               action: navigate
               navigation_path: /lovelace-mobile/1
@@ -774,7 +774,7 @@ views:
                 segments:
                   - 16
               target:
-                entity_id: vacuum.roborock_s6
+                entity_id: vacuum.roborock_q_revo
             entity: ''
             name: Коридор
             icon: mdi:broom
@@ -792,7 +792,7 @@ views:
                   - 18
                   - 19
               target:
-                entity_id: vacuum.roborock_s6
+                entity_id: vacuum.roborock_q_revo
             entity: ''
             name: Крім спальні
             icon: mdi:vacuum
@@ -808,23 +808,16 @@ views:
                 segments:
                   - 17
               target:
-                entity_id: vacuum.roborock_s6
+                entity_id: vacuum.roborock_q_revo
             entity: ''
             name: Спальня
             icon: mdi:bed-double
             hold_action:
               action: none
-      - type: custom:xiaomi-vacuum-map-card
-        map_source:
-          camera: camera.xiaomi_cloud_map_extractor
-        calibration_source:
-          camera: true
-        entity: vacuum.roborock_s6
-        vacuum_platform: default
-        two_finger_pan: false
-        map_locked: true
+      - type: picture-entity
+        entity: camera.roborock_q_revo_map
       - type: custom:more-info-card
-        entity: vacuum.roborock_s6
+        entity: vacuum.roborock_q_revo
         title: " " 
       - type: custom:button-card
         icon: mdi:broom
@@ -854,7 +847,7 @@ views:
             ]]]
           service: xiaomi_miio.vacuum_clean_segment
           service_data:
-            entity_id: vacuum.roborock_s6
+            entity_id: vacuum.roborock_q_revo
             segments: |
               [[[
                 var segments = [];
