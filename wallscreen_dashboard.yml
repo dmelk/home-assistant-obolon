@@ -149,7 +149,6 @@ wallpanel:
               styles:
                 card:
                   - background-color: 'none'
-              entity: sensor.air_outdoor_temp
               label: > 
                 [[[
                   var label = '<span style="color: rgb(255, 255, 255);"><div style="font-size: 75px">';
