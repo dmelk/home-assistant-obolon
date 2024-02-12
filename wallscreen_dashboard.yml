@@ -155,9 +155,9 @@ wallpanel:
                   label += (new Date()).toLocaleTimeString('uk', {hour: "2-digit", minute:"2-digit", hour12: false});
                   label += '</div><div style="font-size: 35px">';
                   label += (new Date()).toLocaleDateString('uk', {weekday: "short", year: "numeric", month: "short", day: "numeric"});
-                  label += '</div><div style="font-size: 35px; display: flex; flex-direction: row">';
+                  /*label += '</div><div style="font-size: 35px; display: flex; flex-direction: row">';
                   label += `<div style="flex:1">${states['sensor.air_outdoor_temp'].state} °C</div>`;
-                  label += `<div style="flex:1">${states['sensor.air_outdoor_humidity'].state}%</div>`;
+                  label += `<div style="flex:1">${states['sensor.air_outdoor_humidity'].state}%</div>`;*/
                   label += '</div></span>';
                   return label;
                 ]]]
