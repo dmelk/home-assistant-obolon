@@ -146,6 +146,7 @@ wallpanel:
               show_name: false
               show_label: true
               show_icon: false
+              entity: sensor.cpu_temp
               styles:
                 card:
                   - background-color: 'none'
@@ -155,9 +156,9 @@ wallpanel:
                   label += (new Date()).toLocaleTimeString('uk', {hour: "2-digit", minute:"2-digit", hour12: false});
                   label += '</div><div style="font-size: 35px">';
                   label += (new Date()).toLocaleDateString('uk', {weekday: "short", year: "numeric", month: "short", day: "numeric"});
-                  /*label += '</div><div style="font-size: 35px; display: flex; flex-direction: row">';
+                  label += '</div><div style="font-size: 35px; display: flex; flex-direction: row">';
                   label += `<div style="flex:1">${states['sensor.air_outdoor_temp'].state} °C</div>`;
-                  label += `<div style="flex:1">${states['sensor.air_outdoor_humidity'].state}%</div>`;*/
+                  label += `<div style="flex:1">${states['sensor.air_outdoor_humidity'].state}%</div>`;
                   label += '</div></span>';
                   return label;
                 ]]]
@@ -177,7 +178,7 @@ wallpanel:
                 card:
                   - background-color: 'none'
                   - font-size: '30px'
-              entity: sensor.air_outdoor_temp
+              entity: sensor.cpu_temp
               label: > 
                 [[[
                   var label = '';
