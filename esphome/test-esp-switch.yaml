@@ -46,8 +46,7 @@ sensor:
     update_interval: 5s
     attenuation: 11db
     filters:
-      # empricially determined offset to match the current meter
-      - offset: -1.69
+      - offset: -1.66
       # this is 20A meter, so 20A = 1.66V, so multiplier is 20/1.66
       - multiply: 12
 
