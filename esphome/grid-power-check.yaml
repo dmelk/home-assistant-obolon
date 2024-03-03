@@ -31,3 +31,15 @@ sensor:
     pin: A0
     name: "Power grid status"
     update_interval: 5s
+
+  - platform: shtcx
+    temperature:
+      name: "Air Outdoor Temperature"
+      id: esp_air_outdoor_temp
+    humidity:
+      name: "Air Outdoor Humidity"
+      id: esp_air_outdoor_humidity
+    update_interval: 5s
+    
+i2c:
+
