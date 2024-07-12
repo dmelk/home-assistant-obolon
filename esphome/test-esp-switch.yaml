@@ -33,30 +33,45 @@ switch:
   pin: 21
   id: relay
   icon: "mdi:light-switch"
-  on_turn_on:
-    - delay: 200ms
-    - switch.turn_off: relay
-
-sensor:
-  - platform: adc
-    pin: 34
-    name: "Test ESP Current"
-    unit_of_measurement: "A"
-    icon: "mdi:current-ac"
-    update_interval: 5s
-    attenuation: 11db
-    filters:
-      - offset: -1.66
-      # this is 20A meter, so 20A = 1.66V, so multiplier is 20/1.66
-      - multiply: 12
+  # restore_mode: RESTORE_DEFAULT_OFF
 
 binary_sensor:
   - platform: gpio
-    icon: "mdi:flash"
-    name: "Test ESP Switch State"
-    pin:
+    pin: 
       number: 19
-      mode: INPUT_PULLUP
-      inverted: True
+      inverted: true
+    name: "Switch"
+    on_click:
+      min_length: 30ms
+      then:
+        - switch.toggle: relay
+
+number:
+  - platform: template
+    id: power_level
+    name: "Power Level"
+    min_value: 0
+    max_value: 100
+    step: 1
+    icon: "mdi:power-plug"
+    optimistic: true
+    initial_value: 100
+    restore_value: true
+    on_value:
+      then:
+        - output.set_level:
+            id: power_output
+            level: !lambda 'return x / 100.0;'
+
+output:
+  - platform: ledc
+    pin: 18
+    id: power_output
+
+light:
+  - platform: monochromatic
+    name: "Power Level"
+    output: power_output
+    id: power_level_light
 
 captive_portal:

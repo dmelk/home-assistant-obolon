@@ -1,0 +1,74 @@
+esphome:
+  name: childroom-controller
+  friendly_name: Childroom Controller
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "KhHHbJH5i9kKVQEmdJYxjRm3S1IEkleIliDZsb4kzLs="
+
+ota:
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esphome-Web-Bcb4F0"
+    password: "QnzXD7qawEpC"
+
+captive_portal:
+    
+i2c:
+  sda: 4
+  scl: 15
+  scan: true
+  id: bus_a
+
+pcf8574:
+  - id: 'pcf8574_hub_out'
+    address: 0x24
+  - id: 'pcf8574_hub_in'
+    address: 0x22
+
+# Individual outputs
+switch:
+  - platform: gpio
+    id: light
+    name: "Light"
+    pin:
+      pcf8574: pcf8574_hub_out
+      # Use pin number 0
+      number: 0
+      # One of INPUT or OUTPUT
+      mode:
+        output: true
+      inverted: true
+
+# Individual inputs
+binary_sensor:
+  - platform: gpio
+    id: light_switch
+    name: "Light Switch"
+    pin:
+      pcf8574: pcf8574_hub_in
+      # Use pin number 0
+      number: 0
+      # One of INPUT or OUTPUT
+      mode:
+        input: true
+      inverted: true
+    on_click:
+      min_length: 30ms
+      then:
+        - switch.toggle: light
