@@ -385,6 +385,7 @@ views:
 
           - type: custom:button-card
             entity: vacuum.roborock_q_revo
+            icon: mdi:robot-vacuum
             aspect_ratio: 1/1
             show_name: false
             template:
