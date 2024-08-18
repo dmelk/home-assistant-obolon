@@ -1,0 +1,278 @@
+esphome:
+  name: hankerila-a6
+  friendly_name: HANKERILA-A6
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "IZ+mIARFTIw3dcAfIftPaBKqi2sTuRszpVtVpMyj4MA="
+
+ota:
+  password: "e8c2b2df5b2891205032eb94434d9d82"
+
+wifi:
+  ssid: wx48            # input your SSID
+  password: a12345678   # input your PASSWORD
+  # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.50.199
+    gateway: 192.168.50.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Hankerila-A6"
+    password: "OzzLaYMn4XR1"
+
+captive_portal:
+
+mqtt:
+  broker: 192.168.50.88
+  username: mqtt
+  password: 123
+  # trun on the relay01
+  on_message:
+     - topic: turn_on_relay01/topic
+       then:  
+        - switch.turn_on: relay01
+     - topic: turn_off_relay01/topic
+       then:  
+        - switch.turn_off: relay01
+
+time:
+  - platform: ds1307
+    id: ds1307_time
+    on_time_sync:
+      - ds1307.read_time:
+          id: ds1307_time    
+# DS18B20 TEMPERATURE SENSOR DETECT
+dallas:
+  - pin: GPIO32
+    id: hub_1
+  - pin: GPIO33
+    id: hub_2
+
+sensor:
+  #2 Temperature sensor output
+  - platform: dallas
+    address: 0xbe012115dcbebc28
+    dallas_id: hub_1
+    name: "Temperature_01"
+  - platform: dallas
+    address: 0xc00358d443b5ae28
+    dallas_id: hub_2
+    name: "Temperature_02"
+  #4 Analog inputs detect 
+  - platform: adc
+    pin: GPIO36
+    name: "Analog_01"
+    raw: True
+    attenuation: 11db
+    filters:
+      - multiply:  0.001221 # 5.0/4095, for attenuation 11db
+    update_interval: 3s
+    
+  - platform: adc
+    pin: GPIO39
+    name: "Analog_02"
+    raw: True
+    attenuation: 11db
+    filters:
+      - multiply: 0.001221 # 5.0/4095, for attenuation 11db
+    update_interval: 3s
+
+  - platform: adc
+    pin: GPIO34
+    name: "Analog_03"
+    raw: True
+    attenuation: 11db
+    filters:
+      - multiply: 0.001221 # 5.0/4095, for attenuation 11db
+    update_interval: 3s
+
+  - platform: adc
+    pin: GPIO35
+    name: "Analog_04"
+    raw: True
+    attenuation: 11db
+    filters:
+      - multiply: 0.001221 # 5.0/4095, for attenuation 11db
+    update_interval: 3s
+#2 DAC ports output 0~10V
+output:
+  - platform: esp32_dac
+    pin: GPIO26     #DAC01 gpio26
+    id: dac_output1 
+  - platform: esp32_dac
+    pin: GPIO25     #DAC01 gpio25
+    id: dac_output2 
+light:
+  - platform: monochromatic
+    output: dac_output1
+    gamma_correct: 2
+    name: "DAC_OUT01"
+  - platform: monochromatic
+    output: dac_output2
+    gamma_correct: 2
+    name: "DAC_OUT02"
+ 
+#I2C bus define
+i2c:
+  sda: 4
+  scl: 15
+  scan: true
+  id: bus_a
+font:
+  - file: "gfonts://Roboto"
+    id: my_font
+    size: 20
+    bpp: 2
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    lambda: |-
+      // Write your display rendering code here
+
+      // For example, draw a line from [x=0,y=0] to [x=50,y=50]
+      // it.line(0, 0, 50, 50);
+      it.print(0, 10,  id(my_font), "Hello World!");
+      
+uart:
+  - id: 'UART_RS232'
+    tx_pin: GPIO17    
+    rx_pin: GPIO16
+    baud_rate: 9600 
+  - id: 'UART_RS485'
+    tx_pin: GPIO27    
+    rx_pin: GPIO14
+    baud_rate: 9600 
+
+# set the RS232/RS485 UART as a button
+button:   
+  - platform: uart
+    uart_id: UART_RS232
+    name: "RS232 send message"
+    data: 'RS232DataToSend'   #when press the button send string"DataToSend"
+  - platform: uart
+    uart_id: UART_RS485
+    name: "RS485 send message"
+    data: 'RS485DataToSend'   #when press the button send string"DataToSend"
+
+pcf8574:
+    # relay output control
+  - id: 'pcf8574_hub_out_1'  
+    address: 0x24
+    # digital input 
+  - id: 'pcf8574_hub_in_1'  
+    address: 0x22  
+
+switch:
+  - platform: gpio
+    name: "light1"
+    id: 'relay01'
+    pin:
+      pcf8574: pcf8574_hub_out_1
+      # set pin number
+      number: 0
+      # set pinMode
+      mode: OUTPUT
+      inverted: true
+      
+
+  - platform: gpio
+    name: "light2"
+    id: 'relay02'
+    pin:
+      pcf8574: pcf8574_hub_out_1
+      number: 1
+      mode: OUTPUT
+      inverted: true
+      
+  - platform: gpio
+    name: "light3"
+    id: 'relay03'
+    pin:
+      pcf8574: pcf8574_hub_out_1
+      number: 2
+      mode: OUTPUT
+      inverted: true
+      
+  - platform: gpio
+    name: "light4"
+    id: 'relay04'
+    pin:
+      pcf8574: pcf8574_hub_out_1
+      number: 3
+      mode: OUTPUT
+      inverted: true
+      
+  - platform: gpio
+    name: "light5"
+    id: 'relay05'
+    pin:
+      pcf8574: pcf8574_hub_out_1
+      number: 4
+      mode: OUTPUT
+      inverted: true
+      
+  - platform: gpio
+    name: "light6"
+    id: 'relay06'
+    pin:
+      pcf8574: pcf8574_hub_out_1
+      number: 5
+      mode: OUTPUT
+      inverted: true
+#6 digital input detect
+binary_sensor:
+  - platform: gpio
+    name: "INPUT_01"
+    pin:
+      pcf8574: pcf8574_hub_in_1
+      number: 0
+      mode: input
+      inverted: true
+  - platform: gpio
+    name: "INPUT_02"
+    pin:
+      pcf8574: pcf8574_hub_in_1
+      number: 1
+      mode: input
+      inverted: true
+  - platform: gpio
+    name: "INPUT_03"
+    pin:
+      pcf8574: pcf8574_hub_in_1
+      number: 2
+      mode: input
+      inverted: true
+  - platform: gpio
+    name: "INPUT_04"
+    pin:
+      pcf8574: pcf8574_hub_in_1
+      number: 3
+      mode: input
+      inverted: true
+  - platform: gpio
+    name: "INPUT_05"
+    pin:
+      pcf8574: pcf8574_hub_in_1
+      number: 4
+      mode: input
+      inverted: true
+  - platform: gpio
+    name: "INPUT_06"
+    pin:
+      pcf8574: pcf8574_hub_in_1
+      number: 5
+      mode: input
+      inverted: true

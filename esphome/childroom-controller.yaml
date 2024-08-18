@@ -16,7 +16,7 @@ api:
     key: "KhHHbJH5i9kKVQEmdJYxjRm3S1IEkleIliDZsb4kzLs="
 
 ota:
-
+  platform: esphome
 
 wifi:
   ssid: !secret wifi_ssid
@@ -41,16 +41,101 @@ pcf8574:
   - id: 'pcf8574_hub_in'
     address: 0x22
 
+
+# RS485 UART defined for CWT-TH01S sensor
+uart:
+  - id: 'UART_RS232'
+    tx_pin: GPIO17    
+    rx_pin: GPIO16
+    baud_rate: 9600 
+  - id: 'UART_RS485'
+    tx_pin: GPIO27    
+    rx_pin: GPIO14
+    baud_rate: 4800
+
+# modbus:
+#   - id: 'modbus_hub'
+#     uart_id: UART_RS485
+
+# modbus_controller:
+#   - id: 'temperature_humidity_sensor'
+#     modbus_id: modbus_hub
+#     address: 1
+#     update_interval: 5s
+
+# sensor:
+#   - platform: modbus_controller
+#     modbus_controller_id: temperature_humidity_sensor
+#     id: temperature
+#     register_type: read
+#     address: 0x0001
+#     name: "Temperature"
+#     value_type: U_WORD
+#     unit_of_measurement: "°C"
+#     accuracy_decimals: 1
+#     filters:
+#       - multiply: 0.1
+#   - platform: modbus_controller
+#     modbus_controller_id: temperature_humidity_sensor
+#     id: humidity
+#     register_type: read
+#     address: 0x0000
+#     name: "Humidity"
+#     unit_of_measurement: "%"
+#     accuracy_decimals: 1
+#     value_type: U_WORD
+#     filters:
+#       - multiply: 0.1
+
 # Individual outputs
 switch:
   - platform: gpio
-    id: light
-    name: "Light"
+    id: main_light
+    name: "Main light"
+    restore_mode: RESTORE_DEFAULT_OFF
     pin:
       pcf8574: pcf8574_hub_out
-      # Use pin number 0
       number: 0
-      # One of INPUT or OUTPUT
+      mode:
+        output: true
+      inverted: true
+  - platform: gpio
+    id: spot_light
+    name: "Spot light"
+    restore_mode: RESTORE_DEFAULT_OFF
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 1
+      mode:
+        output: true
+      inverted: true
+  - platform: gpio
+    id: wall_panel
+    name: "Wall Panel"
+    restore_mode: ALWAYS_ON
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 2
+      mode:
+        output: true
+      inverted: true
+  - platform: gpio
+    id: sockets
+    name: "Sockets"
+    restore_mode: ALWAYS_ON
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 3
+      mode:
+        output: true
+      inverted: true
+  - platform: gpio
+    id: air_conditioner
+    name: "Air Conditioner"
+    restore_mode: ALWAYS_ON
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 4
       mode:
         output: true
       inverted: true
@@ -58,8 +143,8 @@ switch:
 # Individual inputs
 binary_sensor:
   - platform: gpio
-    id: light_switch
-    name: "Light Switch"
+    id: mian_light_switch
+    name: "Main light Switch"
     pin:
       pcf8574: pcf8574_hub_in
       # Use pin number 0
@@ -68,7 +153,20 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_click:
-      min_length: 30ms
+    on_state:
       then:
-        - switch.toggle: light
+        - switch.toggle: main_light
+  - platform: gpio
+    id: spot_light_switch
+    name: "Spot light Switch"
+    pin:
+      pcf8574: pcf8574_hub_in
+      # Use pin number 0
+      number: 1
+      # One of INPUT or OUTPUT
+      mode:
+        input: true
+      inverted: true
+    on_state:
+      then:
+        - switch.toggle: spot_light        
