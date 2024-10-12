@@ -132,7 +132,7 @@ switch:
   - platform: gpio
     id: air_conditioner
     name: "Air Conditioner"
-    restore_mode: ALWAYS_ON
+    restore_mode: ALWAYS_OFF
     pin:
       pcf8574: pcf8574_hub_out
       number: 4
@@ -153,7 +153,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_state:
+    on_click:
       then:
         - switch.toggle: main_light
   - platform: gpio
@@ -169,4 +169,15 @@ binary_sensor:
       inverted: true
     on_state:
       then:
-        - switch.toggle: spot_light        
+        - switch.toggle: spot_light
+  - platform: gpio
+    id: window_switch
+    name: "Window Switch"
+    pin:
+      pcf8574: pcf8574_hub_in
+      # Use pin number 0
+      number: 2
+      # One of INPUT or OUTPUT
+      mode:
+        input: true
+      inverted: true

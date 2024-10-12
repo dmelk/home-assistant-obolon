@@ -49,6 +49,19 @@ button_card_templates:
     hold_action:
       action: toggle
 
+  light_button_tpl_no_bulb:
+    variables:
+      icon: mdi:lightbulb
+      name: ' '
+    icon: '[[[ return variables.icon ]]]'
+    name: '[[[ return variables.name ]]]'
+    styles:
+      icon:
+        - color: |
+            [[[
+              return (entity.state === 'on')? '#FFFFFF' : '#000000';
+            ]]]
+
   light_button_tpl:
     variables:
       switch: ''
@@ -476,11 +489,9 @@ views:
             entity: light.hallway_light
             aspect_ratio: 1/1
             template:
-              - light_button_tpl
+              - light_button_tpl_no_bulb
               - cardg_bg_color
             variables:
-              switch: light.hallway_light
-              light: light.hallway
               name: Коридор
           - type: custom:button-card
             entity: light.kitchen_light
@@ -675,15 +686,11 @@ views:
       - type: horizontal-stack
         cards:
           - type: custom:button-card
-            entity: light.bedroom_light
-            name: Спальня
+            entity: switch.childroom_controller_main_light
+            name: Дитяча
             template:
-              - light_button_tpl
+              - light_button_tpl_no_bulb
               - cardg_bg_color
-            variables:
-              switch: light.bedroom_light
-              light: light.bedroom
-              icon: mdi:lightbulb-group
           - type: custom:button-card
             name: '&nbsp;'
             triggers_update:
