@@ -154,8 +154,15 @@ binary_sensor:
         input: true
       inverted: true
     on_click:
-      then:
-        - switch.toggle: main_light
+      - min_length: 50ms
+        max_length: 350ms
+        then:
+          - switch.toggle: main_light
+      - min_length: 500ms
+        max_length: 2000ms
+        then:
+          - switch.turn_off: main_light
+          - switch.turn_off: spot_light
   - platform: gpio
     id: spot_light_switch
     name: "Spot light Switch"
@@ -167,7 +174,7 @@ binary_sensor:
       mode:
         input: true
       inverted: true
-    on_state:
+    on_click:
       then:
         - switch.toggle: spot_light
   - platform: gpio
@@ -181,3 +188,13 @@ binary_sensor:
       mode:
         input: true
       inverted: true
+    on_click:
+      - min_length: 50ms
+        max_length: 350ms
+        then:
+          - switch.toggle: main_light
+      - min_length: 500ms
+        max_length: 2000ms
+        then:
+          - switch.turn_off: main_light
+          - switch.turn_off: spot_light
