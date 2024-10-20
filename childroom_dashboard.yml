@@ -1,0 +1,73 @@
+kiosk_mode:
+  user_settings:
+    - users:
+        - Childroomcp
+      hide_sidebar: true
+
+wallpanel:
+  enabled: true
+  profile: day
+  profiles:
+    day:
+      black_screen_after_time: 0
+  idle_time: 60
+  image_url: ''
+  info_update_interval: 30
+  info_move_pattern: corners
+  info_move_interval: 60
+  style:
+    wallpanel-screensaver-info-box:
+      '--wp-card-width': 450px
+      background-color: '#00000099'
+      box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12)
+    wallpanel-screensaver-info-box-content:
+      '--ha-card-background': none
+      '--ha-card-box-shadow': none
+      '--ha-card-border-width': 0px
+      '--primary-background-color': '#111111'
+      '--secondary-background-color': '#202020'
+      '--primary-text-color': '#e1e1e1'
+      '--secondary-text-color': '#9b9b9b'
+  cards:
+    - type: vertical-stack
+      cards:
+        - type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              aspect_ratio: 2/1
+              show_name: false
+              show_label: true
+              show_icon: false
+              entity: sensor.cpu_temp
+              styles:
+                card:
+                  - background-color: 'none'
+              label: > 
+                [[[
+                  var label = '<span style="color: rgb(255, 255, 255);"><div style="font-size: 75px">';
+                  label += (new Date()).toLocaleTimeString('uk', {hour: "2-digit", minute:"2-digit", hour12: false});
+                  label += '</div><div style="font-size: 35px">';
+                  label += (new Date()).toLocaleDateString('uk', {weekday: "short", year: "numeric", month: "short", day: "numeric"});
+                  label += '</div><div style="font-size: 35px; display: flex; flex-direction: row">';
+                  label += `<div style="flex:1">${states['sensor.air_outdoor_temp'].state} °C</div>`;
+                  label += `<div style="flex:1">${states['sensor.air_outdoor_humidity'].state}%</div>`;
+                  label += '</div></span>';
+                  return label;
+                ]]]
+
+
+views:
+  - theme: Backend-selected
+    icon: mdi:clcok-time-two-outline
+    badges: []
+    panel: true
+    cards:
+      - type: custom:clock-weather-card
+        entity: weather.obolon_home
+        time_pattern: HH:mm:ss
+        time_format: 24
+        date_pattern: ccc, d.MM.yy
+        locale: uk-Uk
+        temperature_sensor: sensor.air_outdoor_temp
+        humidity_sensor: sensor.air_outdoor_humidity
+        show_humidity: true
