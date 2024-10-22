@@ -104,7 +104,6 @@ views:
         show_humidity: true
   - theme: Backend-selected
     icon: mdi:lightbulb-group-outline
-    type: panel
     badges: []
     cards:
       - type: horizontal-stack
