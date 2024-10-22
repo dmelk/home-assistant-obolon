@@ -111,7 +111,7 @@ views:
           - type: custom:button-card
             entity: switch.childroom_controller_main_light
             name: Загальне
-            aspect_ratio: 1/2
+            aspect_ratio: 1/1.5
             template:
               - light_button_tpl
               - cardg_bg_color
@@ -119,7 +119,7 @@ views:
           - type: custom:button-card
             entity: switch.childroom_controller_spot_light
             name: Ліжко
-            aspect_ratio: 1/2
+            aspect_ratio: 1/1.5
             template:
               - light_button_tpl
               - cardg_bg_color
