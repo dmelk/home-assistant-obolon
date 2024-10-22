@@ -1,7 +1,32 @@
+button_card_templates:
+  cardg_bg_color:
+    styles:
+      card:
+        - background-color: |
+            [[[
+              return (hass.themes.darkMode)? '#333333' : '#EEEEEE';
+            ]]]
+
+  icon_color:
+    styles:
+      icon:
+        - color: rgb(68, 115, 158)
+
+  light_button_tpl:
+    variables:
+      icon_on: mdi:light-switch
+      icon_off: mdi:light-switch-off
+      name: ' '
+    icon: |
+        [[[ 
+          return (entity.state === 'on')? variables.icon_on : variables.icon_off;
+        ]]]
+    name: '[[[ return variables.name ]]]'
+
 kiosk_mode:
   user_settings:
     - users:
-        - Childroomcp
+        - Childroom control panel
       hide_sidebar: true
 
 wallpanel:
@@ -56,9 +81,15 @@ wallpanel:
                 ]]]
 
 
+swipe_nav:
+  enable_mouse_swipe: true
+  animate: swipe
+  prevent_default: true
+  swipe_amount: 30
+
 views:
   - theme: Backend-selected
-    icon: mdi:clcok-time-two-outline
+    icon: mdi:clock-time-two-outline
     badges: []
     panel: true
     cards:
@@ -71,3 +102,26 @@ views:
         temperature_sensor: sensor.air_outdoor_temp
         humidity_sensor: sensor.air_outdoor_humidity
         show_humidity: true
+  - theme: Backend-selected
+    icon: mdi:lightbulb-group-outline
+    type: panel
+    badges: []
+    cards:
+      - type: horizontal-stack
+        cards:
+          - type: custom:button-card
+            entity: switch.childroom_controller_main_light
+            name: Загальне
+            aspect_ratio: 1/2
+            template:
+              - light_button_tpl
+              - cardg_bg_color
+              - icon_color
+          - type: custom:button-card
+            entity: switch.childroom_controller_spot_light
+            name: Ліжко
+            aspect_ratio: 1/2
+            template:
+              - light_button_tpl
+              - cardg_bg_color
+              - icon_color
