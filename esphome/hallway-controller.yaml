@@ -1,0 +1,182 @@
+substitutions:
+  name: esphome-web-bcb504
+  friendly_name: Hallway Controller
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  min_version: 2024.6.0
+  name_add_mac_suffix: false
+  project:
+    name: esphome.web
+    version: dev
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# Allow Over-The-Air updates
+ota:
+- platform: esphome
+
+# Allow provisioning Wi-Fi via serial
+improv_serial:
+
+wifi:
+  # Set up a wifi access point
+  ap: {}
+
+# In combination with the `ap` this allows the user
+# to provision wifi credentials to the device via WiFi AP.
+captive_portal:
+
+dashboard_import:
+  package_import_url: github://esphome/example-configs/esphome-web/esp32.yaml@main
+  import_full_config: true
+
+# Sets up Bluetooth LE (Only on ESP32) to allow the user
+# to provision wifi credentials to the device.
+esp32_improv:
+  authorizer: none
+
+# To have a "next url" for improv serial
+web_server:
+
+i2c:
+  sda: 4
+  scl: 15
+  scan: true
+  id: bus_a
+
+pcf8574:
+  - id: 'pcf8574_hub_out'
+    address: 0x24
+  - id: 'pcf8574_hub_in'
+    address: 0x22
+
+# Individual outputs
+switch:
+  - platform: gpio
+    id: hallway_light
+    name: "Hallway light"
+    restore_mode: RESTORE_DEFAULT_OFF
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 0
+      mode:
+        output: true
+      inverted: true
+  - platform: gpio
+    id: kitchen_light
+    name: "Kitchen light"
+    restore_mode: RESTORE_DEFAULT_OFF
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 1
+      mode:
+        output: true
+      inverted: true
+  - platform: gpio
+    id: wc_light
+    name: "WC light"
+    restore_mode: RESTORE_DEFAULT_OFF
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 2
+      mode:
+        output: true
+      inverted: true
+  - platform: gpio
+    id: bathroom_light
+    name: "Bathroom light"
+    restore_mode: RESTORE_DEFAULT_OFF
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 3
+      mode:
+        output: true
+      inverted: true
+  - platform: gpio
+    id: kitchen_sockets
+    name: "Kitchen sockets"
+    restore_mode: ALWAYS_ON
+    pin:
+      pcf8574: pcf8574_hub_out
+      number: 4
+      mode:
+        output: true
+      inverted: true
+
+# Individual inputs
+binary_sensor:
+  - platform: gpio
+    id: hallway_light_switch
+    name: "Hallway light Switch"
+    pin:
+      pcf8574: pcf8574_hub_in
+      # Use pin number 0
+      number: 0
+      # One of INPUT or OUTPUT
+      mode:
+        input: true
+      inverted: true
+    on_click:
+      - min_length: 50ms
+        max_length: 350ms
+        then:
+          - switch.toggle: hallway_light
+  - platform: gpio
+    id: kitchen_light_switch
+    name: "Kitchen light Switch"
+    pin:
+      pcf8574: pcf8574_hub_in
+      # Use pin number 0
+      number: 1
+      # One of INPUT or OUTPUT
+      mode:
+        input: true
+      inverted: true
+    on_click:
+      - min_length: 50ms
+        max_length: 350ms
+        then:
+          - switch.toggle: kitchen_light
+  - platform: gpio
+    id: wc_light_switch
+    name: "WC light Switch"
+    pin:
+      pcf8574: pcf8574_hub_in
+      # Use pin number 0
+      number: 2
+      # One of INPUT or OUTPUT
+      mode:
+        input: true
+      inverted: true
+    on_click:
+      - min_length: 50ms
+        max_length: 350ms
+        then:
+          - switch.toggle: wc_light
+  - platform: gpio
+    id: bathroom_light_switch
+    name: "Bathroom light Switch"
+    pin:
+      pcf8574: pcf8574_hub_in
+      # Use pin number 0
+      number: 3
+      # One of INPUT or OUTPUT
+      mode:
+        input: true
+      inverted: true
+    on_click:
+      - min_length: 50ms
+        max_length: 350ms
+        then:
+          - switch.toggle: bathroom_light
