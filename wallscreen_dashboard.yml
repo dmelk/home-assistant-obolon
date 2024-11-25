@@ -402,19 +402,8 @@ views:
                               >
                                 return functions.lightStyles('light.wc_light', 'light.wc');
                     - name: Hallway light
-                      entity: light.hallway_light
+                      entity: light.hallway_controller_hallway_light
                       element: light.hallway
-                      double_tap_action:
-                        - action: call-service
-                          service: browser_mod.popup
-                          service_data:
-                            title: Коридор
-                            content:
-                              type: vertical-stack
-                              cards:
-                                - type: entities
-                                  entities:
-                                    - entity: light.hallway_light
                       tap_action: toggle
                       state_action:
                         - action: call-service
@@ -423,7 +412,7 @@ views:
                             element: light.hallway
                             style: |
                               >
-                                return functions.simpleLightStyles('light.hallway_light');
+                                return functions.simpleLightStyles('light.hallway_controller_hallway_light');
                     - name: Kitchen light
                       entity: light.kitchen_light
                       element: light.kitchen

@@ -486,13 +486,12 @@ views:
       - type: horizontal-stack
         cards:
           - type: custom:button-card
-            entity: light.hallway_light
+            entity: light.hallway_controller_hallway_light
             aspect_ratio: 1/1
+            name: Коридор
             template:
               - light_button_tpl_no_bulb
               - cardg_bg_color
-            variables:
-              name: Коридор
           - type: custom:button-card
             entity: light.kitchen_light
             aspect_ratio: 1/1
