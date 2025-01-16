@@ -211,11 +211,11 @@ button_card_templates:
     custom_fields:
       temp: |
         [[[
-          return `<span style="color: rgb(68, 115, 158);">${states[variables.temp].state} °C</span>`
+          return `<span style="color: rgb(68, 115, 158); padding-left: 50px">${states[variables.temp].state} °C</span>`
         ]]]
       hum: |
         [[[
-          return `<span style="color: rgb(68, 115, 158);">${states[variables.humidity].state} %</span>`
+          return `<span style="color: rgb(68, 115, 158); padding-right: 50px">${states[variables.humidity].state} %</span>`
         ]]]
   
   time_increment_tpl:
@@ -691,6 +691,12 @@ views:
               - light_button_tpl_no_bulb
               - cardg_bg_color
           - type: custom:button-card
+            entity: switch.childroom_controller_spot_light
+            name: Дитяче ліжко
+            template:
+              - light_button_tpl_no_bulb
+              - cardg_bg_color
+          - type: custom:button-card
             name: '&nbsp;'
             triggers_update:
               - sensor.air_bedroom_co2
@@ -719,7 +725,12 @@ views:
               switch: light.switch_living_room
               light: light.living_room
               icon: mdi:lightbulb-group
-
+          - type: custom:button-card
+            entity: input_boolean.balcony_right_heater_long_bool
+            name: Вітальня ліжко
+            template:
+              - light_button_tpl_no_bulb
+              - cardg_bg_color
           - type: custom:button-card
             name: '&nbsp;'
             triggers_update:
@@ -738,20 +749,6 @@ views:
 
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            triggers_update:
-              - sensor.air_balcony_co2
-              - sensor.air_balcony_temp
-              - sensor.air_balcony_humidity
-            name: Балкон
-            show_name: true
-            template:
-              - air_button_tpl
-              - cardg_bg_color
-            variables:
-              co2: sensor.air_balcony_co2
-              temp: sensor.air_balcony_temp
-              humidity: sensor.air_balcony_humidity
           - type: custom:button-card
             triggers_update:
               - sensor.air_outdoor_temp
