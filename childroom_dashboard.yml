@@ -108,14 +108,24 @@ views:
     cards:
       - type: horizontal-stack
         cards:
-          - type: custom:button-card
-            entity: switch.childroom_controller_spot_light
-            name: Ліжко
-            aspect_ratio: 1/1.5
-            template:
-              - light_button_tpl
-              - cardg_bg_color
-              - icon_color
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                entity: switch.childroom_controller_spot_light
+                name: Ліжко
+                aspect_ratio: 1/0.75
+                template:
+                  - light_button_tpl
+                  - cardg_bg_color
+                  - icon_color
+              - type: custom:button-card
+                entity: light.wled
+                name: Під ліжком
+                aspect_ratio: 1/0.75
+                template:
+                  - light_button_tpl
+                  - cardg_bg_color
+                  - icon_color
           - type: custom:button-card
             entity: switch.childroom_controller_main_light
             name: Загальне
@@ -124,3 +134,15 @@ views:
               - light_button_tpl
               - cardg_bg_color
               - icon_color
+  - theme: Backend-selected
+    icon: mdi:lightbulb-group-outline
+    badges: []
+    cards:
+      - type: horizontal-stack
+        cards:
+          - type: custom:more-info-card
+            entity: light.wled
+            aspect_ratio: 1/1.5
+          - type: custom:more-info-card
+            entity: light.childroom_bed_bulb
+            aspect_ratio: 1/1.5

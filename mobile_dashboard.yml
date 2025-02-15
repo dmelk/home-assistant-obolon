@@ -355,9 +355,7 @@ views:
                 [[[
                   return (entity.state === 'on')? 'call-service' : 'none';
                 ]]]
-              service: light.turn_off
-              service_data:
-                entity_id: light.switch_all
+              service: script.turn_off_all_light
             double_tap_action:
               action: |
                 [[[
@@ -366,7 +364,6 @@ views:
               service: light.turn_off
               service_data:
                 entity_id: light.switch_fan_all
-
           - type: custom:button-card
             entity: light.fan_all
             aspect_ratio: 1/1
@@ -697,20 +694,14 @@ views:
               - light_button_tpl_no_bulb
               - cardg_bg_color
           - type: custom:button-card
-            name: '&nbsp;'
-            triggers_update:
-              - sensor.air_bedroom_co2
-              - sensor.air_bedroom_temp
-              - sensor.air_bedroom_humidity
-            template:
-              - climate_button_tpl
-              - cardg_bg_color
+            entity: light.wled
             variables:
-              co2: sensor.air_bedroom_co2
-              temp: sensor.air_bedroom_temp
-              humidity: sensor.air_bedroom_humidity
-              climate_state: input_boolean.climate_bedroom
-              climate_value: input_number.climate_bedroom_temp
+              name: Дитяче wled
+              switch: light.wled
+              light: light.wled
+            template:
+              - light_button_tpl
+              - cardg_bg_color
 
       - type: horizontal-stack
         cards:

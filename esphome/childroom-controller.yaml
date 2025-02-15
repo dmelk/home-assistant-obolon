@@ -163,6 +163,8 @@ binary_sensor:
         then:
           - switch.turn_off: main_light
           - switch.turn_off: spot_light
+          - homeassistant.action:
+              action: script.childroom_wled_off
   - platform: gpio
     id: spot_light_switch
     name: "Spot light Switch"
@@ -192,9 +194,12 @@ binary_sensor:
       - min_length: 50ms
         max_length: 350ms
         then:
-          - switch.toggle: main_light
+          - homeassistant.action:
+              action: script.childroom_wled_toggle
       - min_length: 500ms
         max_length: 2000ms
         then:
           - switch.turn_off: main_light
           - switch.turn_off: spot_light
+          - homeassistant.action:
+              action: script.childroom_wled_off
