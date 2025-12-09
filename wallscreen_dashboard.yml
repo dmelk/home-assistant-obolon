@@ -303,42 +303,9 @@ views:
                             >
                               return (entity.state === 'on')? 'spinning' : '';
                     - name: Bathroom light
-                      entity: light.bathroom_light_main
+                      entity: light.hallway_controller_bathroom_light
                       element: light.bathroom_main
                       tap_action: toggle
-                      double_tap_action:
-                        - action: call-service
-                          service: browser_mod.popup
-                          service_data:
-                            title: Ванна
-                            content:
-                              type: vertical-stack
-                              cards:
-                                - type: entities
-                                  entities:
-                                    - entity: light.bathroom_light_main
-                                    - entity: light.bathroom_light_secondary
-                                    - entity: light.fan_bathroom
-                                - type: conditional
-                                  conditions:
-                                    - entity: light.bathroom_light_main
-                                      state: 'on'
-                                  card:
-                                    type: custom:more-info-card
-                                    entity: light.bathroom
-                                    title: ' '
-                      state_action:
-                        - action: call-service
-                          service: floorplan.class_set
-                        - action: call-service
-                          service: floorplan.style_set
-                          service_data:
-                            element: light.bathroom_main
-                            style: |
-                              >
-                                return functions.lightStyles('light.bathroom_light_main', 'light.bathroom');
-                    - name: Bathroom light bulb
-                      entity: light.bathroom
                       state_action:
                         - action: call-service
                           service: floorplan.style_set
@@ -346,7 +313,7 @@ views:
                             element: light.bathroom_main
                             style: |
                               >
-                                return functions.lightStyles('light.bathroom_light_main', 'light.bathroom');
+                                return functions.simpleLightStyles('light.hallway_controller_bathroom_light');
                     - name: Bathroom light mirror
                       entity: light.bathroom_light_secondary
                       element: light.bathroom_secondary
@@ -358,49 +325,17 @@ views:
                             >
                               return (entity.state === 'on')? 'light-on' : '';
                     - name: WC light
-                      entity: light.wc_light
+                      entity: light.hallway_controller_wc_light
                       element: light.wc
-                      double_tap_action:
-                        - action: call-service
-                          service: browser_mod.popup
-                          service_data:
-                            title: Туалет
-                            content:
-                              type: vertical-stack
-                              cards:
-                                - type: entities
-                                  entities:
-                                    - entity: light.wc_light
-                                    - entity: light.fan_wc
-                                - type: conditional
-                                  conditions:
-                                    - entity: light.wc_light
-                                      state: 'on'
-                                  card:
-                                    type: custom:more-info-card
-                                    entity: light.wc
-                                    title: ' '
                       tap_action: toggle
                       state_action:
                         - action: call-service
-                          service: floorplan.class_set
-                        - action: call-service
                           service: floorplan.style_set
                           service_data:
                             element: light.wc
                             style: |
                               >
-                                return functions.lightStyles('light.wc_light', 'light.wc');
-                    - name: WC light bulb
-                      entity: light.wc
-                      state_action:
-                        - action: call-service
-                          service: floorplan.style_set
-                          service_data:
-                            element: light.wc
-                            style: |
-                              >
-                                return functions.lightStyles('light.wc_light', 'light.wc');
+                                return functions.simpleLightStyles('light.hallway_controller_wc_light');
                     - name: Hallway light
                       entity: light.hallway_controller_hallway_light
                       element: light.hallway
