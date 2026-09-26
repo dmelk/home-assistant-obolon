@@ -157,8 +157,8 @@ wallpanel:
                   label += '</div><div style="font-size: 35px">';
                   label += (new Date()).toLocaleDateString('uk', {weekday: "short", year: "numeric", month: "short", day: "numeric"});
                   label += '</div><div style="font-size: 35px; display: flex; flex-direction: row">';
-                  label += `<div style="flex:1">${states['sensor.air_outdoor_temp'].state} °C</div>`;
-                  label += `<div style="flex:1">${states['sensor.air_outdoor_humidity'].state}%</div>`;
+                  label += `<div style="flex:1">${hass.formatEntityState(states['sensor.air_outdoor_temp'])}</div>`;
+                  label += `<div style="flex:1">${hass.formatEntityState(states['sensor.air_outdoor_humidity'])}</div>`;
                   label += '</div></span>';
                   return label;
                 ]]]
@@ -273,13 +273,23 @@ views:
                         },
                         airTextWithCO2: (tempEntity, humEntity, co2Entity) => {
                           if (entities[tempEntity].state === undefined) return 'Offline';
+                          var fmt = (id) => {
+                            var value = Number(entities[id].state);
+                            var precision = (hass.entities[id] || {}).display_precision;
+                            return (isNaN(value) || precision === undefined)? entities[id].state : value.toFixed(precision);
+                          };
 
-                          return `${entities[tempEntity].state}° ${entities[humEntity].state}% ${parseInt(entities[co2Entity].state)} CO₂`;
+                          return `${fmt(tempEntity)}° ${fmt(humEntity)}% ${parseInt(entities[co2Entity].state)} CO₂`;
                         },
                         airText: (tempEntity, humEntity) => {
                           if (entities[tempEntity].state === undefined) return 'Offline';
+                          var fmt = (id) => {
+                            var value = Number(entities[id].state);
+                            var precision = (hass.entities[id] || {}).display_precision;
+                            return (isNaN(value) || precision === undefined)? entities[id].state : value.toFixed(precision);
+                          };
 
-                          return `${entities[tempEntity].state}° ${entities[humEntity].state}%`;
+                          return `${fmt(tempEntity)}° ${fmt(humEntity)}%`;
                         },
                         anyBinarySensors: (prefix, sensors) => {
                           for (var i = 0; i < sensors.length; i++) {
@@ -768,7 +778,7 @@ views:
             cards:
               - type: custom:xiaomi-vacuum-map-card
                 map_source:
-                  camera: camera.roborock_q_revo_map
+                  camera: image.vitalnia_roborock_q_revo_obolonskii_34
                   crop:
                     top: 210
                     bottom: 210

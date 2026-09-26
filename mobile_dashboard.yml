@@ -138,11 +138,11 @@ button_card_templates:
         ]]]
       temp: |
         [[[
-          return `<span style="color: rgb(68, 115, 158);">${states[variables.temp].state} °C</span>`
+          return `<span style="color: rgb(68, 115, 158);">${hass.formatEntityState(states[variables.temp])}</span>`
         ]]]
       hum: |
         [[[
-          return `<span style="color: rgb(68, 115, 158);">${states[variables.humidity].state} %</span>`
+          return `<span style="color: rgb(68, 115, 158);">${hass.formatEntityState(states[variables.humidity])}</span>`
         ]]]
       co2: |
         [[[
@@ -180,11 +180,11 @@ button_card_templates:
     custom_fields:
       temp: |
         [[[
-          return `<span style="color: rgb(68, 115, 158);">${states[variables.temp].state} °C</span>`
+          return `<span style="color: rgb(68, 115, 158);">${hass.formatEntityState(states[variables.temp])}</span>`
         ]]]
       hum: |
         [[[
-          return `<span style="color: rgb(68, 115, 158);">${states[variables.humidity].state} %</span>`
+          return `<span style="color: rgb(68, 115, 158);">${hass.formatEntityState(states[variables.humidity])}</span>`
         ]]]
       co2: |
         [[[
@@ -211,11 +211,11 @@ button_card_templates:
     custom_fields:
       temp: |
         [[[
-          return `<span style="color: rgb(68, 115, 158); padding-left: 50px">${states[variables.temp].state} °C</span>`
+          return `<span style="color: rgb(68, 115, 158); padding-left: 50px">${hass.formatEntityState(states[variables.temp])}</span>`
         ]]]
       hum: |
         [[[
-          return `<span style="color: rgb(68, 115, 158); padding-right: 50px">${states[variables.humidity].state} %</span>`
+          return `<span style="color: rgb(68, 115, 158); padding-right: 50px">${hass.formatEntityState(states[variables.humidity])}</span>`
         ]]]
   
   time_increment_tpl:
@@ -799,7 +799,7 @@ views:
               action: none
       - type: custom:xiaomi-vacuum-map-card
         map_source:
-          camera: camera.roborock_q_revo_map
+          camera: image.vitalnia_roborock_q_revo_obolonskii_34
         calibration_source:
           camera: true
         entity: vacuum.roborock_q_revo
